@@ -18,9 +18,9 @@ const UserSchema = new mongoose.Schema({
         required: true
     },
     location: { 
-        city: { type: String, required: true },
-        state: { type: String, required: true },
-        country: { type: String, required: true }
+        city: { type: String},
+        state: { type: String},
+        country: { type: String}
     },
     profilePic: {
         type: String, // URL to the profile picture
@@ -49,6 +49,12 @@ const UserSchema = new mongoose.Schema({
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Post" // Refers to the Post model
+        }
+    ],
+    services: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Service" // Refers to the Service model
         }
     ],
     createdAt: {

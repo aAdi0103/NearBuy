@@ -13,6 +13,8 @@ import { connectDB } from "./Lib/db.js";
 
 import authRoutes from "./Routes/authRouter.js";
 import userRoutes from "./Routes/userRouter.js"
+import postRoutes from "./Routes/postRouter.js"
+import serviceRoutes from "./Routes/serviceRouter.js"
 
 const app = express();
 app.use(cookieParser());
@@ -20,6 +22,8 @@ app.use(express.json());
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/posts",postRoutes);
+app.use("/api/v1/services",serviceRoutes);
 
 
 app.get("/", (req, res) => {

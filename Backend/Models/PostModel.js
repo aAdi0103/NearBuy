@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose"
 
 const PostSchema = new mongoose.Schema({
     heading: {
@@ -6,7 +6,7 @@ const PostSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
-    bio: {
+    description: {
         type: String,
         required: true,
         maxlength: 1000
@@ -14,13 +14,12 @@ const PostSchema = new mongoose.Schema({
     images: [
         {
             type: String, // Store image URLs
-            required: true
         }
     ],
-    location: {
-        city: String,
-        state: String,
-        country: String
+    location: { 
+        city: { type: String, required: true },
+        state: { type: String, required: true },
+        country: { type: String, required: true }
     },
     price: {
         type: Number,
@@ -50,4 +49,6 @@ const PostSchema = new mongoose.Schema({
 
 });
 
-module.exports = mongoose.model("Post", PostSchema);
+
+const Post = mongoose.model("Post",PostSchema);
+export default Post;
