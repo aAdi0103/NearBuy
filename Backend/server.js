@@ -1,6 +1,8 @@
 import dotenv from "dotenv";
 import { fileURLToPath } from 'url';
 import path from "path";
+import cors from 'cors'
+
 
 // Load .env from the project root
 const __filename = fileURLToPath(import.meta.url);
@@ -19,6 +21,11 @@ import serviceRoutes from "./Routes/serviceRouter.js"
 const app = express();
 app.use(cookieParser());
 app.use(express.json());
+
+app.use(cors({
+  origin:"http://localhost:5173",
+  credentials:true
+}))
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", userRoutes);

@@ -28,7 +28,7 @@ const PostSchema = new mongoose.Schema({
     },
     category: {
         type: String,
-        enum: ["Real Estate", "Job Listing", "Service", "Product", "Other"],
+        enum: ["Real Estate", "Furniture", "Electronics", "Fashion", "Sports","Books","Others"],
         required: true
     },   
     status: {

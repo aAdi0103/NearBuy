@@ -90,6 +90,23 @@ export const createPosts = async (req, res) => {
     }
 }
 
+export const getCategories = async (req, res) => {
+  try {
+    const categories = await Post.distinct("category");
+
+    if (!categories || categories.length === 0) {
+      return res.status(404).json({ message: "No categories found" });
+    }
+
+    console.log("Categories fetched:", categories);
+    res.json(categories);
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    res.status(500).json({ error: "Failed to fetch categories" });
+  }
+};
+
+
 
 
 
