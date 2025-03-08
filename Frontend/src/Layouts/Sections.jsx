@@ -1,35 +1,41 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+import React from "react";
+import { NavLink, Outlet } from "react-router-dom";
 
 const Sections = () => {
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      <nav className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7 flex items-center justify-center gap-4 flex-col">
+      <h1 className="font-bold font-mono">What are you looking for?</h1>
+      <nav className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
         <NavLink
-          to="/product"
+          to="/sections/product"
           className={({ isActive }) =>
-            `text-lg font-bold relative pb-2 transition-colors duration-200 ${
-              isActive ? 'text-blue-600' : 'text-gray-600 hover:text-blue-600'
-            } after:content-[""] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-blue-600 after:scale-x-0 after:transition-transform after:duration-200 hover:after:scale-x-100 ${
-              isActive ? 'after:scale-x-100' : ''
+            `px-6 py-2 text-lg font-bold rounded-lg transition-all duration-300 ${
+              isActive
+                ? "bg-blue-600 text-white shadow-lg scale-105"
+                : "bg-yellow-300 text-gray-700 hover:bg-blue-500 hover:text-white hover:scale-105"
             }`
           }
         >
           Products
         </NavLink>
         <NavLink
-          to="/services"
+          to="/sections/services"
           className={({ isActive }) =>
-            `text-lg font-bold relative pb-2 transition-colors duration-200 ${
-              isActive ? 'text-blue-600' : 'text-gray-600 hover:text-blue-600'
-            } after:content-[""] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-blue-600 after:scale-x-0 after:transition-transform after:duration-200 hover:after:scale-x-100 ${
-              isActive ? 'after:scale-x-100' : ''
+            `px-6 py-2 text-lg font-bold rounded-lg transition-all duration-300 ${
+              isActive
+                ? "bg-blue-600 text-white shadow-lg scale-105"
+                : "bg-yellow-300 text-gray-700 hover:bg-blue-500 hover:text-white hover:scale-105"
             }`
           }
         >
           Services
         </NavLink>
       </nav>
+
+      {/* Render the selected component below */}
+      <div className="mt-6">
+        <Outlet />
+      </div>
     </div>
   );
 };

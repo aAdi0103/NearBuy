@@ -23,7 +23,7 @@ const Header = () => {
             <Search className="w-5 h-5 text-gray-400 mr-2" />
             <input
               type="text"
-              placeholder="What service are you looking for?"
+              placeholder="What service or Product are you looking for?"
               className="w-full focus:outline-none"
             />
           </div>
