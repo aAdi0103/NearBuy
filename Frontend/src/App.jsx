@@ -34,17 +34,17 @@ function App() {
   return (
    <Routes>
    <Route path="/" element={<HomePage/>}/>
+
    <Route path="/sections" element={<Sections />}>
           <Route path="product" element={<Product />} />
           <Route path="services" element={<Service />} />
    </Route>
-   <Route path='/login' element={<LoginPage/>}></Route>
+
+   <Route path='/login' element={!authUser ? <LoginPage /> : <Navigate to={"/"} />}></Route>
    <Route
           path="/signup"
-          element={!authUser ? <SignPage /> : <Navigate to={"/"} />}
-        />
+          element={!authUser ? <SignPage /> : <Navigate to={"/"} />}     />
       <Route path='/profile' element={<ProfilePage/>} />
-
    </Routes>
   )
 }

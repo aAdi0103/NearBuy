@@ -26,7 +26,7 @@ const Navbar = () => {
 
   const userLocation = authUser
     ? { city: authUser.location.city, state: authUser.location.state, country: authUser.location.country }
-    : { city: "New York" };
+    : { city: <a href="/profile" className="text-blue-500">Set Your Location</a> };
 
   // Logout function
   const { mutate: logout } = useMutation({
@@ -39,6 +39,7 @@ const Navbar = () => {
     },
   });
 
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (!event.target.closest(".dropdown-container")) {
@@ -48,6 +49,7 @@ const Navbar = () => {
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
+
 
   return (
     <nav className="bg-white shadow-sm relative">
@@ -62,13 +64,13 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-4">
             <div className="flex items-center text-gray-600 mr-3">
               <MapPin className="w-4 h-4 mr-1" />
-              <span>
-                {userLocation.city}, {userLocation.state || ""}{" "}
-                {userLocation.country || ""}
+              <span className="text-blue-600">
+                <a href="/profile">{userLocation.city} {userLocation.state || ""}{" "}
+                {userLocation.country || ""}</a>
               </span>
             </div>
             <button className="bg-yellow-600 font-mono text-white px-4 py-2 rounded-md hover:bg-blue-700">
-              List Services/Items
+              <a href="/list">List Services/Items</a>
             </button>
 
             {/* User Dropdown */}
@@ -84,20 +86,39 @@ const Navbar = () => {
 
                 {/* Dropdown Menu */}
                 {isDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg z-50">
-                    <Link
-                      to="/profile"
-                      className="block px-4 py-2 text-gray-700 hover:bg-gray-200"
+                  <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-50 overflow-hidden transition-all duration-300">
+                  <Link
+                    to="/profile"
+                    className="flex font-semibold items-center px-4 py-3 text-gray-800 hover:bg-gray-100 transition duration-200"
+                  >
+                    <svg
+                      className="w-5 h-5 mr-2 text-gray-500"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
                     >
-                      Profile
-                    </Link>
-                    <button
-                      onClick={() => logout()}
-                      className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-200"
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.121 17.804A4 4 0 017.757 16h8.486a4 4 0 012.636 1.804M12 14a4 4 0 100-8 4 4 0 000 8z" />
+                    </svg>
+                    Profile
+                  </Link>
+                  <button
+                    onClick={() => logout()}
+                    className="flex items-center w-full text-left px-4 py-3 text-gray-800 hover:bg-red-100 font-semibold hover:text-red-600 transition duration-200"
+                  >
+                    <svg
+                      className="w-5 h-5 mr-2 text-red-500"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
                     >
-                      Logout
-                    </button>
-                  </div>
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7" />
+                    </svg>
+                    Logout
+                  </button>
+                </div>
+                
                 )}
               </div>
             ) : (

@@ -22,6 +22,10 @@ const UserSchema = new mongoose.Schema({
         state: { type: String},
         country: { type: String}
     },
+    about:{
+        type:String,
+        trim:true
+    },
     profilePic: {
         type: String, // URL to the profile picture
         default: "default-profile.png"

@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import { Loader } from "lucide-react";
 
 const LoginForm = () => {
-	const [username, setUsername] = useState("");
+	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const queryClient = useQueryClient();
 
@@ -21,7 +21,7 @@ const LoginForm = () => {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		loginMutation({ username, password });
+		loginMutation({ email, password });
 	};
 
 	return (
@@ -29,7 +29,7 @@ const LoginForm = () => {
   onSubmit={handleSubmit}
   className="space-y-6 w-full max-w-md p-6 bg-white shadow-lg rounded-2xl border border-gray-200"
 >
-  <h2 className="text-2xl font-semibold text-center text-gray-800">
+  <h2 className="text-2xl mb-[-18px] font-semibold text-center text-gray-800">
     Welcome Back!
   </h2>
   <p className="text-sm text-gray-500 text-center">
@@ -38,10 +38,10 @@ const LoginForm = () => {
 
   <div className="relative">
     <input
-      type="text"
-      placeholder="Username"
-      value={username}
-      onChange={(e) => setUsername(e.target.value)}
+      type="email"
+      placeholder="Email"
+      value={email}
+      onChange={(e) => setEmail(e.target.value)}
       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow"
       required
     />

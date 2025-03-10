@@ -1,5 +1,7 @@
 import { Home,Utensils,ArrowRight, Dumbbell, GraduationCap, Laptop2, BookOpen, ShoppingCart, ListChecks } from "lucide-react";
 import { Facebook, Instagram, Linkedin } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { axiosInstance } from "../lib/axios";
 
 
 function CategoryCard({ icon, title, listings }) {
@@ -20,6 +22,21 @@ const sendEmail = () => {
 };
 
 function App() {
+  const { data: authUser, isLoading } = useQuery({
+    queryKey: ["authUser"],
+    queryFn: async () => {
+      try {
+        const res = await axiosInstance.get("/auth/me");
+        return res.data;
+      } catch (err) {
+        if (err.response && err.response.status === 401) {
+          return null;
+        }
+        toast.error(err.response.data.message || "Something went wrong");
+      }
+    },
+  });
+  
   const categories = [
     { icon: <Home size={32} />, title: 'Home Cleaning Services', listings: 2845 }, // Broom for cleaning
     { icon: <Utensils  size={32} />, title: 'Home Maid Services', listings: 1573 }, // Home for maid services
@@ -48,9 +65,15 @@ function App() {
           ))}
         </div>
       </div>
+
       <div className="max-w-7xl mt-20 mx-auto sm:px-6 lg:px-8">
       <div className="flex justify-between items-center">
-      <h2 className="text-2xl font-bold mb-6">Popular in New York</h2>
+      <h2 className="text-2xl font-bold mb-6">
+  {authUser && authUser.location && authUser.location.city 
+    ? `Popular in ${authUser.location.city}`
+    : "Popular"}
+</h2>
+
       <a className="text-blue-700 font-semibold flex items-center" href="">
           View All <ArrowRight className="ml-1" size={18} />
         </a>      </div>
@@ -113,6 +136,10 @@ function App() {
         </div>
       </div>
     </div>
+
+
+
+    {/* Features */}
     <div className="bg-zinc-100 mt-20 py-10 px-4 md:px-8 lg:px-16 rounded-lg shadow-sm">
       <h2 className="text-center text-3xl md:text-2xl font-bold text-gray-900">
        Our Features 
@@ -143,6 +170,8 @@ function App() {
         
       </div>
     </div>
+
+
     <footer className="bg-gray-900 mt-10 text-gray-400 py-10 px-6">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
         {/* About LocalHub */}
@@ -199,6 +228,8 @@ function App() {
         <p className="text-sm">&copy; 2025 LocalHub. All rights reserved.</p>
       </div>
     </footer>
+
+
     </div>
   );
 }
