@@ -71,7 +71,7 @@ const ProfilePage = () => {
           </div>
         </div>
 
-        <a className="text-blue-700 underline flex items-center gap-2" href={`/profile/:${authUser._id}`}>
+        <a className="text-blue-700 underline flex items-center gap-2" href={`/profile/${authUser._id}`}>
       <Pencil className="w-4 h-4" />
       Edit your Profile
     </a>     
