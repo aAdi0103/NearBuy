@@ -1,6 +1,24 @@
-import { Facebook, Instagram, Linkedin } from "lucide-react";
-
+import { Facebook, Instagram, Linkedin,Pencil } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { axiosInstance } from "../lib/axios";
 const ProfilePage = () => {
+
+  const { data: authUser, isLoading } = useQuery({
+    queryKey: ["authUser"],
+    queryFn: async () => {
+      try {
+        const res = await axiosInstance.get("/auth/me");
+        return res.data;
+      } catch (err) {
+        if (err.response && err.response.status === 401) {
+          return null;
+        }
+        toast.error(err.response.data.message || "Something went wrong");
+      }
+    },
+  });
+
+
   return (
     <div className="max-w-7xl mx-auto p-4 md:p-6 flex flex-col gap-6">
 
@@ -29,7 +47,7 @@ const ProfilePage = () => {
           </div>
 
           {/* Buttons */}
-          <div className="mt-4 flex flex-col gap-2 w-full">
+          <div className="mt-4 flex flex-col gap-2 w-full items-center">
             <button className="bg-blue-600 text-white py-2 rounded-lg w-full md:w-40">
               Contact Now
             </button>
@@ -41,10 +59,10 @@ const ProfilePage = () => {
 
         {/* Middle Section: Name & Details */}
         <div className="flex-1">
-          <h2 className="text-2xl font-bold">John Doe</h2>
+          <h2 className="text-2xl font-bold">{authUser.name}</h2>
           <p className="text-gray-500">Professional Personal Trainer</p>
           <p className="text-gray-600 flex items-center gap-1">
-            📍 San Francisco, CA • 4.8 | 150 Reviews
+            📍 {authUser.location.city},{authUser.location.state},{authUser.location.country}  
           </p>
 
           {/* Reviews Section */}
@@ -52,7 +70,13 @@ const ProfilePage = () => {
             <h1 className="font-bold">Reviews</h1>
           </div>
         </div>
-      </div>
+
+        <a className="text-blue-700 underline flex items-center gap-2" href={`/profile/:${authUser._id}`}>
+      <Pencil className="w-4 h-4" />
+      Edit your Profile
+    </a>     
+    
+     </div>
 
       {/* About, Services, & Reviews Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -64,8 +88,8 @@ const ProfilePage = () => {
             Certified personal trainer with 5+ years of experience helping clients achieve their fitness goals through personalized training programs and nutrition guidance.
           </p>
           <h4 className="font-semibold mt-4">Location</h4>
-          <p className="text-gray-600">San Francisco, CA</p>
-          <p className="mt-6 text-blue-400 font-semibold">Contact for more details...</p>
+          <p className="text-gray-600">📍 {authUser.location.city}, {authUser.location.state}, {authUser.location.country}  </p>
+          <p className="mt-6 text-blue-400 font-semibold"><a href="">Contact me for more details...</a></p>
         </div>
 
         {/* Services Section */}
@@ -104,13 +128,14 @@ const ProfilePage = () => {
                 <p className="text-gray-800 font-bold">$40 / 45 Minutes</p>
               </div>
             </div>
+
           </div>
         </div>
       </div>
 
       {/* Reviews Section */}
       <div className="bg-white p-4 rounded-lg shadow-lg">
-        <h3 className="text-xl font-bold">Reviews</h3>
+        <h3 className="text-xl font-bold">Products Listed by User</h3>
         <div className="mt-4">
           
           {/* Review 1 */}

@@ -10,6 +10,7 @@ import Sections from './Layouts/Sections';
 import LoginPage from './Pages/authPage/loginPage';
 import SignPage from './Pages/authPage/SignPage'
 import ProfilePage from './Pages/ProfilePage'
+import EditProfile from './Pages/EditProfile';
 function App() {
   
   const { data: authUser, isLoading } = useQuery({
@@ -27,6 +28,7 @@ function App() {
     },
   });
 
+  
   if (isLoading) return null;
 
 
@@ -41,10 +43,9 @@ function App() {
    </Route>
 
    <Route path='/login' element={!authUser ? <LoginPage /> : <Navigate to={"/"} />}></Route>
-   <Route
-          path="/signup"
-          element={!authUser ? <SignPage /> : <Navigate to={"/"} />}     />
-      <Route path='/profile' element={<ProfilePage/>} />
+   <Route path="/signup" element={!authUser ? <SignPage /> : <Navigate to={"/"} />}/>
+    <Route path='/profile' element={<ProfilePage/>} />
+    <Route path="/profile/:id" element={authUser ? <EditProfile /> : <Navigate to={"/login"}/>} />
    </Routes>
   )
 }
