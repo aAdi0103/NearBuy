@@ -17,6 +17,7 @@ const ProfilePage = () => {
       }
     },
   });
+  console.log(authUser)
 
 
   return (
@@ -28,7 +29,7 @@ const ProfilePage = () => {
         {/* Profile Image & Socials */}
         <div className="flex flex-col items-center md:w-1/3 text-center">
           <img
-            src="https://via.placeholder.com/100"
+            src={authUser.profilePic||"/avtar.png"}
             alt="Trainer"
             className="w-32 h-32 rounded-full border-4 border-gray-300"
           />
@@ -60,9 +61,9 @@ const ProfilePage = () => {
         {/* Middle Section: Name & Details */}
         <div className="flex-1">
           <h2 className="text-2xl font-bold">{authUser.name}</h2>
-          <p className="text-gray-500">Professional Personal Trainer</p>
-          <p className="text-gray-600 flex items-center gap-1">
-            📍 {authUser.location.city},{authUser.location.state},{authUser.location.country}  
+          <p className="text-gray-500">{authUser.role}</p>
+          <p className="text-gray-600 flex items-center gap-1">  
+            📍 {authUser.location.city}, {authUser.location.state}, {authUser.location.country}  
           </p>
 
           {/* Reviews Section */}

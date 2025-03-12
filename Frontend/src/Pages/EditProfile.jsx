@@ -20,7 +20,6 @@ const { data: userProfile, isLoading: isUserProfileLoading, error } = useQuery({
   onError: (err) => console.error("Error fetching user profile:", err),
 });
 
-
 const { mutate: updateProfile } = useMutation({
 	mutationFn: async (updatedData) => {
 		const response = await axiosInstance.put("/users/updateUser", updatedData);
