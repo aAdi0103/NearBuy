@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Navbar from "../../Layouts/Navbar";
 
 function ServiceListing() {
+  
   const [selectedCategory, setSelectedCategory] = useState("");
   const [price, setPrice] = useState("");
   const [duration, setDuration] = useState("");
@@ -177,6 +178,7 @@ function ServiceListing() {
     </div>
     </>
   );
+
 }
 
 export default ServiceListing;

@@ -1,28 +1,102 @@
 import { useState } from "react";
 import { X, Upload, Camera, DollarSign, Tag, Package, Truck,MapPin } from "lucide-react";
 import Navbar from "../../Layouts/Navbar";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { axiosInstance } from "../../lib/axios";
 
 const ProductListing = () => {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
-  const [price, setPrice] = useState("");
+  const [price, setPrice] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [condition, setCondition] = useState("New");
   const [images, setImages] = useState([]);
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [country, setCountry] = useState("");
+  const [imagePreview, setImagePreview] = useState(null);
+
+  // getting the loggedIn user
+  const { data: authUser, isLoading } = useQuery({
+    queryKey: ["authUser"],
+    queryFn: async () => {
+      try {
+        const res = await axiosInstance.get("/auth/me");
+        return res.data;
+      } catch (err) {
+        if (err.response && err.response.status === 401) {
+          return null;
+        }
+        toast.error(err.response.data.message || "Something went wrong");
+      }
+    },
+  });
 
 
-  const handleImageUpload = (e) => {
-    const files = Array.from(e.target.files || []);
-    setImages([...images, ...files.map((file) => URL.createObjectURL(file))]);
+  const [location, setLocation] = useState({
+    city: "",
+    state: "",
+    country: "",
+  });
+
+  const handleChange = (e) => {
+    setLocation({ ...location, [e.target.name]: e.target.value });
   };
 
-  const removeImage = (index) => {
-    setImages(images.filter((_, i) => i !== index));
-  };
+  const queryClient = useQueryClient();
+
+	const { mutate: createPostMutation, isPending } = useMutation({
+		mutationFn: async (postData) => {
+			const res = await axiosInstance.post("/posts/create", postData, {
+				headers: { "Content-Type": "application/json" },
+			});
+			return res.data;
+		},
+		onSuccess: () => {
+			resetForm();
+			toast.success("Post created successfully");
+			queryClient.invalidateQueries({ queryKey: ["posts"] });
+		},
+		onError: (err) => {
+			toast.error(err.response.data.message || "Failed to create post");
+		},
+	});
+
+
+  const handlePostCreation = async () => {
+		try {
+			const postData = { heading:title,category,description,price,quantity,condition,location };
+			if (images) postData.images = await readFileAsDataURL(images);
+
+			createPostMutation(postData);
+		} catch (error) {
+			console.error("Error in handlePostCreation:", error);
+		}
+	};
+
+	const resetForm = () => {
+		setContent("");
+		setImages(null);
+		setImagePreview(null);
+	};
+
+	const handleImageUpload = (e) => {
+		const file = e.target.files[0];
+		setImages(file);
+		if (file) {
+			readFileAsDataURL(file).then(setImagePreview);
+		} else {
+			setImagePreview(null);
+		}
+	};
+
+	const readFileAsDataURL = (file) => {
+		return new Promise((resolve, reject) => {
+			const reader = new FileReader();
+			reader.onloadend = () => resolve(reader.result);
+			reader.onerror = reject;
+			reader.readAsDataURL(file);
+		});
+	};
+
 
 
   return (
@@ -59,11 +133,10 @@ const ProductListing = () => {
                     className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                   >
                     <option value="">Select category</option>
-                    <option value="electronics">Electronics</option>
-                    <option value="fashion">Books & Stationery</option>
-                    <option value="home">Home & Garden</option>
-                    <option value="sports">Sports & Outdoors</option>
-                    <option value="RealEstate">Real Estate & Rentals</option>
+                    <option value="Electronics">Electronics</option>
+                    <option value="Books">Books & Stationery</option>
+                    <option value="Sports">Sports & Outdoors</option>
+                    <option value="Real Estate">Real Estate & Rentals</option>
                     <option value="others">Others</option>
                   </select>
                 </div>
@@ -83,43 +156,46 @@ const ProductListing = () => {
 
             </div>
             <div className="bg-gray-50 rounded-xl p-6 space-y-6">
-              <div className="flex items-center">
-                <MapPin className="w-6 h-6 text-blue-600 mr-2" />
-                <h2 className="text-xl font-semibold text-gray-900">Location</h2>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
-                  <input
-                    type="text"
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                    placeholder="Enter city"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">State</label>
-                  <input
-                    type="text"
-                    value={state}
-                    onChange={(e) => setState(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                    placeholder="Enter state"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Country</label>
-                  <input
-                    type="text"
-                    value={country}
-                    onChange={(e) => setCountry(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                    placeholder="Enter country"
-                  />
-                </div>
-              </div>
-            </div>
+      <div className="flex items-center">
+        <MapPin className="w-6 h-6 text-blue-600 mr-2" />
+        <h2 className="text-xl font-semibold text-gray-900">Location</h2>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
+          <input
+            type="text"
+            name="city"
+            value={location.city}
+            onChange={handleChange}
+            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+            placeholder="Enter city"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">State</label>
+          <input
+            type="text"
+            name="state"
+            value={location.state}
+            onChange={handleChange}
+            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+            placeholder="Enter state"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Country</label>
+          <input
+            type="text"
+            name="country"
+            value={location.country}
+            onChange={handleChange}
+            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+            placeholder="Enter country"
+          />
+        </div>
+      </div>
+    </div>
 
 
             {/* Pricing & Details */}
@@ -135,7 +211,7 @@ const ProductListing = () => {
                   <input
                     type="number"
                     value={price}
-                    onChange={(e) => setPrice(e.target.value)}
+                    onChange={(e) => setPrice(parseInt(e.target.value))}
                     className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     placeholder="0.00"
                   />
@@ -197,24 +273,11 @@ const ProductListing = () => {
                   <span className="text-xs text-gray-500 mt-1">Supported formats: JPG, PNG, GIF</span>
                 </label>
               </div>
-
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                {images.map((src, index) => (
-                  <div key={index} className="relative group">
-                    <img
-                      src={src}
-                      alt={`Upload ${index + 1}`}
-                      className="w-full h-32 object-cover rounded-xl shadow-sm"
-                    />
-                    <button
-                      onClick={() => removeImage(index)}
-                      className="absolute top-2 right-2 bg-white rounded-full p-1.5 shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-red-50"
-                    >
-                      <X className="w-4 h-4 text-red-600" />
-                    </button>
-                  </div>
-                ))}
-              </div>
+              {imagePreview && (
+				<div className='mt-2'>
+					<img src={imagePreview} alt='Selected' className='w-full h-auto rounded-lg' />
+				</div>
+			)}
             </div>
 
 
@@ -222,7 +285,9 @@ const ProductListing = () => {
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6 border-t">
               <button className="text-gray-600 hover:text-gray-900 transition-colors">Cancel</button>
               <div className="flex flex-col sm:flex-row gap-3">
-                <button className="px-6 py-2.5 text-white bg-blue-600 rounded-xl hover:bg-blue-700 shadow-sm hover:shadow transition-all duration-200">
+                <button className="px-6 py-2.5 text-white bg-blue-600 rounded-xl hover:bg-blue-700 shadow-sm hover:shadow transition-all duration-200"
+                onClick={handlePostCreation}
+                >
                   Publish Listing
                 </button>
               </div>

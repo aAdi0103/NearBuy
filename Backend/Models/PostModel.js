@@ -11,11 +11,10 @@ const PostSchema = new mongoose.Schema({
         required: true,
         maxlength: 1000
     },
-    images: [
-        {
-            type: String, // Store image URLs
-        }
-    ],
+    images:{
+        type: String, // Store image URLs
+
+    },
     location: { 
         city: { type: String, required: true },
         state: { type: String, required: true },
@@ -37,7 +36,7 @@ const PostSchema = new mongoose.Schema({
     },
     category: {
         type: String,
-        enum: ["Real Estate", "Furniture", "Electronics", "Fashion", "Sports","Books","Others"],
+        enum: ["Real Estate", "Electronics","Sports","Books","Others"],
         required: true
     },   
     datePosted: {
@@ -49,7 +48,6 @@ const PostSchema = new mongoose.Schema({
         ref: "User", // Reference to User model
         required: true
     }
-
 });
 
 
