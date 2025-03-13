@@ -1,169 +1,132 @@
 import React, { useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { axiosInstance } from "../lib/axios";
-import { toast } from "react-hot-toast";
 import { MapPin, Camera } from "lucide-react";
 
-function ProfileHeader({ userData, onSave, isOwnProfile }) {
-  
-  
-	const [isEditing, setIsEditing] = useState(false);
-	const [editedData, setEditedData] = useState({});
-	const queryClient = useQueryClient();
-	console.log(userData)
-  console.log(editedData)
+function ProfileHeader({ userData, onSave }) {
 
-	const { data: authUser } = useQuery({ queryKey: ["authUser"] });
+  const [editedData, setEditedData] = useState(userData);
+
 
   const handleImageChange = (event) => {
-		const file = event.target.files[0];
-		if (file) {
-			const reader = new FileReader();
-			reader.onloadend = () => {
-				setEditedData((prev) => ({ ...prev, [event.target.name]: reader.result }));
-			};
-			reader.readAsDataURL(file);
-		}
-	};
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setEditedData((prev) => ({
+          ...prev,
+          profilePic: reader.result,
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
-
-  const handleSave = () => {
-		onSave(editedData);
-		setIsEditing(false);
-	};
 
   return (
-    <div className="bg-slate-400">
+    <div className="bg-gradient-to-br from-white to-gray-50 p-8 rounded-xl shadow-2xl max-w-3xl mx-auto flex flex-row gap-x-8 items-start">
 
-
-<div className='relative -mt-20 mb-4 bg-red-400'>
-					<img
-						className='w-32 h-32 rounded-full mx-auto object-cover'
-						src={editedData.profilePic || userData.profilePic || ""}
-						alt={userData.name}
-					/>
-
-					{isEditing && (
-						<label className='absolute bottom-0 right-1/2 transform translate-x-16 bg-white p-2 rounded-full shadow cursor-pointer'>
-							<Camera size={20} />
-							<input
-								type='file'
-								className='hidden'
-								name='profilePic'
-								onChange={handleImageChange}
-								accept='image/*'
-							/>
-						</label>
-					)}
-				</div>
-
-
-     {isEditing ? (
-						<input
-							type='text'
-							value={editedData.name ?? userData.name}
-							onChange={(e) => setEditedData({ ...editedData, name: e.target.value })}
-							className='text-2xl font-bold mb-2 text-center w-full'
-						/>
-					) : (
-						<h1 className='text-2xl font-bold mb-2'>{userData.name}</h1>
-					)}
-
-{isEditing ? (
-  <input
-    type="text"
-    value={editedData.role ?? userData.role ?? "User"}
-    onChange={(e) => setEditedData({ ...editedData, role: e.target.value })}
-    className="text-gray-600 text-center w-full"
-  />
-) : (
-  <p className="text-gray-600">{userData.role ?? "User"}</p>
-)}
-
-<div className='flex flex-col items-center mt-2'>
-  <MapPin size={16} className='text-gray-500 mb-1' />
-  
-  {isEditing ? (
-    <div className="flex flex-col gap-1">
-      <input
-        type='text'
-        value={editedData.location?.city ?? userData.location.city}
-        onChange={(e) =>
-          setEditedData({
-            ...editedData,
-            location: {
-              city: e.target.value,
-              state: editedData.location?.state ?? userData.location.state,
-              country: editedData.location?.country ?? userData.location.country,
-            },
-          })
-        }
-        className='text-gray-600 text-center border rounded p-1'
-        placeholder='Enter City'
+  {/* Profile Picture Upload */}
+  <div className="relative flex-shrink-0">
+    <div className="relative w-32 h-32">
+      <img
+        className="w-32 h-32 rounded-full object-cover ring-4 ring-white shadow-xl"
+        src={editedData.profilePic || ""}
+        alt={editedData.name}
       />
+      <label className="absolute bottom-0 right-0 transform translate-x-2 translate-y-2 bg-white p-2.5 rounded-full shadow-lg cursor-pointer hover:bg-gray-50 transition-all duration-300 group-hover:scale-110">
+        <Camera size={20} className="text-gray-600" />
+        <input
+          type="file"
+          className="hidden"
+          onChange={handleImageChange}
+          accept="image/*"
+        />
+      </label>
+    </div>
+  </div>
+
+  {/* Profile Details Section */}
+  <div className="flex-grow space-y-6">
+    
+    {/* Name Input */}
+    <div className="relative">
       <input
-        type='text'
-        value={editedData.location?.state ?? userData.location.state}
-        onChange={(e) =>
-          setEditedData({
-            ...editedData,
-            location: {
-              city: editedData.location?.city ?? userData.location.city,
-              state: e.target.value,
-              country: editedData.location?.country ?? userData.location.country,
-            },
-          })
-        }
-        className='text-gray-600 text-center border rounded p-1'
-        placeholder='Enter State'
-      />
-      <input
-        type='text'
-        value={editedData.location?.country ?? userData.location.country}
-        onChange={(e) =>
-          setEditedData({
-            ...editedData,
-            location: {
-              city: editedData.location?.city ?? userData.location.city,
-              state: editedData.location?.state ?? userData.location.state,
-              country: e.target.value,
-            },
-          })
-        }
-        className='text-gray-600 text-center border rounded p-1'
-        placeholder='Enter Country'
+        type="text"
+        value={editedData.name}
+        onChange={(e) => setEditedData({ ...editedData, name: e.target.value })}
+        className="w-full px-4 py-3 text-lg font-semibold bg-white rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-300 outline-none"
+        placeholder="Your Name"
       />
     </div>
-  ) : (
-    <span className='text-gray-600 text-center'>
-      {userData.location.city}, {userData.location.state}, {userData.location.country}
-    </span>
-  )}
+
+    {/* Role Input */}
+    <div className="relative">
+      <input
+        type="text"
+        value={editedData.role ?? "User"}
+        onChange={(e) => setEditedData({ ...editedData, role: e.target.value })}
+        className="w-full px-4 py-2.5 text-gray-600 bg-white rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-300 outline-none"
+        placeholder="Your Role"
+      />
+    </div>
+
+    {/* Location Inputs */}
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 text-gray-500">
+        <MapPin size={18} />
+        <span className="text-sm font-medium">Location Details</span>
+      </div>
+      
+      <div className="grid grid-cols-3 gap-3">
+        <input
+          type="text"
+          value={editedData.location?.city || ""}
+          onChange={(e) =>
+            setEditedData({
+              ...editedData,
+              location: { ...editedData.location, city: e.target.value },
+            })
+          }
+          className="px-4 py-2.5 text-gray-600 bg-white rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-300 outline-none"
+          placeholder="City"
+        />
+        <input
+          type="text"
+          value={editedData.location?.state || ""}
+          onChange={(e) =>
+            setEditedData({
+              ...editedData,
+              location: { ...editedData.location, state: e.target.value },
+            })
+          }
+          className="px-4 py-2.5 text-gray-600 bg-white rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-300 outline-none"
+          placeholder="State"
+        />
+        <input
+          type="text"
+          value={editedData.location?.country || ""}
+          onChange={(e) =>
+            setEditedData({
+              ...editedData,
+              location: { ...editedData.location, country: e.target.value },
+            })
+          }
+          className="px-4 py-2.5 text-gray-600 bg-white rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-300 outline-none"
+          placeholder="Country"
+        />
+      </div>
+    </div>
+
+    {/* Save Button */}
+    <button
+      className="w-full mt-4 px-6 py-3 bg-primary text-white bg-blue-600 font-medium rounded-xl hover:bg-primary/90 transform hover:-translate-y-0.5 transition-all duration-300 focus:ring-4 focus:ring-primary/20"
+      onClick={() => onSave(editedData)}
+    >
+      Save Changes
+    </button>
+  </div>
+
 </div>
 
-
-{isOwnProfile ? (
-					isEditing ? (
-						<button
-							className='w-full bg-primary text-blue-700 py-2 px-4 rounded-full hover:bg-primary-dark
-							 transition duration-300'
-							onClick={handleSave}
-						>
-							Save Profile
-						</button>
-					) : (
-						<button
-							onClick={() => setIsEditing(true)}
-							className='w-full bg-primary text-yellow-600 py-2 px-4 rounded-full hover:bg-primary-dark
-							 transition duration-300'
-						>
-							Edit Profile
-						</button>
-					)
-				) : (
-					<div className='flex justify-center'>{renderConnectionButton()}</div>
-				)}
-    </div>
   );
 }
 

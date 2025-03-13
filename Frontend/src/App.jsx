@@ -11,6 +11,12 @@ import LoginPage from './Pages/authPage/loginPage';
 import SignPage from './Pages/authPage/SignPage'
 import ProfilePage from './Pages/ProfilePage'
 import EditProfile from './Pages/EditProfile';
+import EditServices from './Pages/EditServices'
+import EditProducts from './Pages/EditProducts';
+import Listing from './Pages/Listings/Listing'
+import { toast, Toaster } from "react-hot-toast";
+import ServicesListings from './Pages/Listings/ServicesListings';
+import ProductListing from './Pages/Listings/ProductListing'
 function App() {
   
   const { data: authUser, isLoading } = useQuery({
@@ -34,6 +40,8 @@ function App() {
 
 
   return (
+    <>
+    <Toaster position="top-center" reverseOrder={false} />
    <Routes>
    <Route path="/" element={<HomePage/>}/>
 
@@ -44,9 +52,16 @@ function App() {
 
    <Route path='/login' element={!authUser ? <LoginPage /> : <Navigate to={"/"} />}></Route>
    <Route path="/signup" element={!authUser ? <SignPage /> : <Navigate to={"/"} />}/>
-    <Route path='/profile' element={<ProfilePage/>} />
-    <Route path="/profile/:id" element={authUser ? <EditProfile /> : <Navigate to={"/login"}/>} />
+    <Route path='/profile/:email' element={<ProfilePage/>} />
+    <Route path="/edit/:id" element={authUser ? <EditProfile /> : <Navigate to={"/login"}/>} />
+    <Route path="/edit/services/:id" element={authUser ? <EditServices/>:<Navigate to={"/login"}/>} />
+    <Route path="/edit/Products/:id" element={authUser ? <EditProducts/>:<Navigate to={"/login"}/>} />
+
+    <Route path="/list" element={authUser ? <Listing/>: <Navigate to={"/login"} />} />
+    <Route path="/list/Services" element={authUser ? <ServicesListings/>:<Navigate to={"/login"}/>} />
+    <Route path="/list/Products" element={authUser ? <ProductListing/>:<Navigate to={"/login"}/>} />
    </Routes>
+   </>
   )
 }
 

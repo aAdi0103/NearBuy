@@ -26,17 +26,20 @@ const PostSchema = new mongoose.Schema({
         required: true,
         min: 0
     },
+    quantity:{
+        type:Number,
+        required: true,
+    },
+    condition:{
+        type: String,
+        enum: ["New", "Like New", "Used", "Refurbished"],
+        required: true
+    },
     category: {
         type: String,
         enum: ["Real Estate", "Furniture", "Electronics", "Fashion", "Sports","Books","Others"],
         required: true
     },   
-    status: {
-        type: String,
-        enum: ["Available", "Sold", "Expired"],
-        default: "Available"
-    },
-
     datePosted: {
         type: Date,
         default: Date.now

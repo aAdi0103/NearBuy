@@ -88,7 +88,7 @@ const Navbar = () => {
                 {isDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-50 overflow-hidden transition-all duration-300">
                   <Link
-                    to="/profile"
+                    to={`/profile/${authUser.email}`}
                     className="flex font-semibold items-center px-4 py-3 text-gray-800 hover:bg-gray-100 transition duration-200"
                   >
                     <svg

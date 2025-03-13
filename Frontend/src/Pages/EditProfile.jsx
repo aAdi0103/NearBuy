@@ -3,38 +3,40 @@ import { useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { axiosInstance } from "../lib/axios";
 import ProfileHeader from './ProfileHeader';
+import AboutSection from './AboutSection';
+import {toast} from "react-hot-toast"
+import EditContact from './EditContact';
 
 function EditProfile() {
 
-  const { id } = useParams();
+const { id } = useParams();
 const queryClient = useQueryClient();
 
 const { data: authUser, isLoading } = useQuery({
   queryKey: ["authUser"],
 });
 
+
 const { data: userProfile, isLoading: isUserProfileLoading, error } = useQuery({
   queryKey: ["userProfile", id],
   queryFn: () => axiosInstance.get(`/users/${id}`).then(res => res.data),
-  enabled: !!id, // Fetch only when id is defined
+  enabled: !!id, 
   onError: (err) => console.error("Error fetching user profile:", err),
 });
 
 const { mutate: updateProfile } = useMutation({
 	mutationFn: async (updatedData) => {
 		const response = await axiosInstance.put("/users/updateUser", updatedData);
-		return response.data; // Return updated user data
+		return response.data;
 	},
 	onSuccess: (updatedUser) => {
 		toast.success("Profile updated successfully");
-
-		// ✅ Update the "userProfile" cache instantly
+	
 		queryClient.setQueryData(["userProfile", id], (oldData) => ({
 			...oldData,
-			...updatedUser, // Merge updated data
+			...updatedUser,
 		}));
 
-		// ✅ If it's the logged-in user, update "authUser" cache too
 		queryClient.setQueryData(["authUser"], (oldAuthUser) => {
 			if (oldAuthUser && oldAuthUser._id === updatedUser._id) {
 				return { ...oldAuthUser, ...updatedUser };
@@ -49,7 +51,6 @@ const { mutate: updateProfile } = useMutation({
 });
 
 
-
   if (isLoading || isUserProfileLoading) return null;
 
   const isOwnProfile = authUser._id === userProfile._id;
@@ -57,14 +58,18 @@ const { mutate: updateProfile } = useMutation({
 
 
   const handleSave = (updatedData) => {
+	console.log(updatedData)
 		updateProfile(updatedData);
 	};
-  
+   console.log(authUser)
 
 
   return (
-		<div className='max-w-4xl mx-auto p-4'>
+		<div className='max-w-4xl mx-auto p-4 flex flex-col gap-8'>
+
 			<ProfileHeader userData={userData} isOwnProfile={isOwnProfile} onSave={handleSave} />
+			<AboutSection userData={userData} isOwnProfile={isOwnProfile} onSave={handleSave} />
+            <EditContact userData={userData} isOwnProfile={isOwnProfile} onSave={handleSave}  />
 			
 		</div>
   )

@@ -1,6 +1,10 @@
-import { Facebook, Instagram, Linkedin,Pencil } from "lucide-react";
+import { Facebook, Instagram, Linkedin, Pencil, Settings } from "lucide-react";
+import { Link } from "react-router-dom";
+
 import { useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "../lib/axios";
+import { useParams } from "react-router-dom";
+import ConatctPage from "./ContactPage";
 const ProfilePage = () => {
 
   const { data: authUser, isLoading } = useQuery({
@@ -17,19 +21,16 @@ const ProfilePage = () => {
       }
     },
   });
-  console.log(authUser)
-
-
+    const {email} = useParams();
   return (
-    <div className="max-w-7xl mx-auto p-4 md:p-6 flex flex-col gap-6">
 
+    <div className="max-w-7xl mx-auto p-4 md:p-6 flex flex-col gap-6">
       {/* Profile Section */}
       <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col md:flex-row items-center md:items-start gap-8 md:gap-16 text-center md:text-left">
-        
         {/* Profile Image & Socials */}
         <div className="flex flex-col items-center md:w-1/3 text-center">
           <img
-            src={authUser.profilePic||"/avtar.png"}
+            src={authUser.profilePic || "/avtar.png"}
             alt="Trainer"
             className="w-32 h-32 rounded-full border-4 border-gray-300"
           />
@@ -48,22 +49,16 @@ const ProfilePage = () => {
           </div>
 
           {/* Buttons */}
-          <div className="mt-4 flex flex-col gap-2 w-full items-center">
-            <button className="bg-blue-600 text-white py-2 rounded-lg w-full md:w-40">
-              Contact Now
-            </button>
-            <button className="border border-blue-600 text-blue-600 py-2 rounded-lg w-full md:w-40">
-              Send Message
-            </button>
-          </div>
+          <ConatctPage phoneNumber={authUser.Phone} email={authUser.email} />
         </div>
 
         {/* Middle Section: Name & Details */}
         <div className="flex-1">
           <h2 className="text-2xl font-bold">{authUser.name}</h2>
           <p className="text-gray-500">{authUser.role}</p>
-          <p className="text-gray-600 flex items-center gap-1">  
-            📍 {authUser.location.city}, {authUser.location.state}, {authUser.location.country}  
+          <p className="text-gray-600 flex items-center gap-1">
+            📍 {authUser.location.city}, {authUser.location.state},{" "}
+            {authUser.location.country}
           </p>
 
           {/* Reviews Section */}
@@ -72,32 +67,39 @@ const ProfilePage = () => {
           </div>
         </div>
 
-        <a className="text-blue-700 underline flex items-center gap-2" href={`/profile/${authUser._id}`}>
-      <Pencil className="w-4 h-4" />
-      Edit your Profile
-    </a>     
-    
-     </div>
+        <a
+  className="text-blue-700 underline flex items-center gap-2"
+  href={`/edit/${authUser?._id}`}
+>
+  <Pencil className="w-4 h-4" />
+  {authUser && decodeURIComponent(email) === authUser.email ? "Edit Your Profile" : ""}
+</a>
+
+      </div>
 
       {/* About, Services, & Reviews Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
         {/* About Section */}
         <div className="bg-white p-4 rounded-lg shadow-lg">
           <h3 className="text-xl font-bold">About</h3>
           <p className="text-gray-600 mt-2">
-            Certified personal trainer with 5+ years of experience helping clients achieve their fitness goals through personalized training programs and nutrition guidance.
+            {authUser.About}
           </p>
           <h4 className="font-semibold mt-4">Location</h4>
-          <p className="text-gray-600">📍 {authUser.location.city}, {authUser.location.state}, {authUser.location.country}  </p>
-          <p className="mt-6 text-blue-400 font-semibold"><a href="">Contact me for more details...</a></p>
+          <p className="text-gray-600">
+            📍 {authUser.location.city}, {authUser.location.state},{" "}
+            {authUser.location.country}{" "}
+          </p>
+          <p className="mt-6 text-blue-400 font-semibold">
+            <a href="">Contact me for more details...</a>
+          </p>
         </div>
 
         {/* Services Section */}
-        <div className="bg-white p-4 rounded-lg shadow-lg lg:col-span-2">
+        <div className="bg-white p-4 rounded-lg flex items-start shadow-lg lg:col-span-2">    
+          <div>
           <h3 className="text-xl font-bold">Services Offered</h3>
-          <div className="mt-4">
-            
+          <div className="mt-10">
             {/* Service 1 */}
             <div className="flex flex-col md:flex-row gap-4 border-b pb-4 mb-4">
               <img
@@ -108,7 +110,8 @@ const ProfilePage = () => {
               <div>
                 <h4 className="font-semibold">Full-Body Workout Plan</h4>
                 <p className="text-gray-600 text-sm">
-                  Personalized workout session focusing on strength and conditioning.
+                  Personalized workout session focusing on strength and
+                  conditioning.
                 </p>
                 <p className="text-gray-800 font-bold">$50 / 1 Hour</p>
               </div>
@@ -129,22 +132,30 @@ const ProfilePage = () => {
                 <p className="text-gray-800 font-bold">$40 / 45 Minutes</p>
               </div>
             </div>
-
           </div>
+          </div>
+          <a
+      href={`/edit/services/${authUser._id}`}
+      className="text-red-500 flex items-center gap-2 hover:text-red-700 transition"
+    >
+      <Settings size={20} /> {/* Icon */}
+      Edit or Delete Your Services
+    </a>
         </div>
       </div>
 
-      {/* Reviews Section */}
-      <div className="bg-white p-4 rounded-lg shadow-lg">
-        <h3 className="text-xl font-bold">Products Listed by User</h3>
-        <div className="mt-4">
-          
+      {/* Product Section */}
+      <div className="bg-white p-4 flex items-start rounded-lg shadow-lg">
+        <div>
+          <h3 className="text-xl font-bold">Products Listed by User</h3>
+          <div className="mt-4">
           {/* Review 1 */}
           <div className="border-b pb-4 mb-4">
             <p className="font-semibold">Sarah Johnson</p>
             <p className="text-sm text-gray-500">December 15, 2023</p>
             <p className="text-gray-600 mt-2">
-              "John is an exceptional trainer! His personalized approach helped me achieve my fitness goals faster than I expected."
+              "John is an exceptional trainer! His personalized approach helped
+              me achieve my fitness goals faster than I expected."
             </p>
           </div>
 
@@ -153,13 +164,21 @@ const ProfilePage = () => {
             <p className="font-semibold">Michael Chen</p>
             <p className="text-sm text-gray-500">December 10, 2023</p>
             <p className="text-gray-600 mt-2">
-              "Great attention to detail and very knowledgeable about fitness and nutrition."
+              "Great attention to detail and very knowledgeable about fitness
+              and nutrition."
             </p>
           </div>
-
         </div>
+        
+        </div>
+        <a
+      href={`/edit/Products/${authUser._id}`}
+      className="text-red-500 flex items-center gap-2 hover:text-red-700 transition"
+    >
+      <Settings size={20} /> {/* Icon */}
+      Edit or Delete Your Products
+    </a>
       </div>
-
     </div>
   );
 };

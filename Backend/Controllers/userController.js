@@ -3,10 +3,8 @@ import cloudinary from '../Lib/cloudinaryConfig.js'
 
 export const updateProfile = async (req, res) => {
 	try {
-		const allowedFields = ["name", "profilePic", "location","role"];
+		const allowedFields = ["name", "profilePic", "location","role","About","Phone"];
 		const updatedData = {};
-
-		// Process text fields dynamically
 		for (const field of allowedFields) {
 			if (req.body[field]) {
 				updatedData[field] = req.body[field];
@@ -33,12 +31,12 @@ export const updateProfile = async (req, res) => {
 		}
 
 		res.json(user);
-	} catch (error) {
+	}
+	 catch (error) {
 		console.error("Error in updateProfile controller:", error);
 		res.status(500).json({ message: "Server error" });
 	}
 };
-
 
 export const getPublicProfile = async (req, res) => {
 	try {

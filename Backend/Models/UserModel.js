@@ -29,32 +29,12 @@ const UserSchema = new mongoose.Schema({
         state: { type: String},
         country: { type: String}
     },
-    about:{
-        type:String,
-        trim:true
-    },
     profilePic: {
         type: String, // URL to the profile picture
         default: "default-profile.png"
     },
-    contactDetails: {
-        phone: {
-            type: String,
-        },
-        alternatePhone: {
-            type: String
-        },
-        contactEmail: {
-            type: String,
-            lowercase: true
-        },
-        address: {
-            street: String,
-            city: String,
-            state: String,
-            country: String,
-            zip: String
-        }
+    Phone: {
+         type:String
     },
     posts: [
         {
