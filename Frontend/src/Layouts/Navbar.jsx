@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"; /
 import { axiosInstance } from "../lib/axios";
 import { Menu, X, MapPin, User, ChevronDown } from "lucide-react";
 import { Link } from "react-router-dom";
+import logo from '../assets/2.png';
 
 const Navbar = () => {
   const queryClient = useQueryClient(); // Get queryClient instance
@@ -56,9 +57,18 @@ const Navbar = () => {
       <div className="max-w-8xl mx-auto px-2 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           {/* Logo */}
-          <div className="flex-shrink-0">
-            <h1 className="text-blue-600 text-xl font-bold">LocalHub</h1>
-          </div>
+          <div className="flex items-center justify-center h-screen">
+         <a href="/">
+         <div className="flex-shrink-0 flex items-center justify-center">
+  <img className="w-[10vw] sm:w-[7vw] md:w-[5.5vw]" src={logo} alt="" />
+  <h1 className="text-blue-600 text-[4vw] sm:text-[3vw] md:text-[2vw] ml-[-10px] sm:ml-[-12px] md:ml-[-15px] mb-1 font-bold">
+    NearBuy
+  </h1>
+</div>
+         </a>
+
+</div>
+
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-4">

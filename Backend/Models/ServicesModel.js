@@ -13,7 +13,7 @@ const ServiceSchema = new mongoose.Schema({
     },
     category: {
         type: String,
-        enum: ["Fitness & Wellness", "Business Consulting", "Online Tutoring", "IT & Software Services", "Laundry", "Other"],
+        enum: ["Fitness", "Business", "Education", "IT", "Photography", "others"],
         required: true
     },
     images: [
@@ -34,17 +34,17 @@ const ServiceSchema = new mongoose.Schema({
     },
     experience:{
         type: String,
-        enum: ["30 min", "1 hour", "2 hour"],
+        enum: ["Beginner", "Intermediate", "Expert"],
         required: true
     },
     duration:{
         type: String,
-        enum: ["Beginner", "Intermediate", "expert"],
+        enum: ["30 Minutes", "1 Hour", "2 Hours"],
         required: true
     },
     language:{
-        type:String,
-        required:true
+       type:[String],
+       required:true
     },
     provider: {
         type: mongoose.Schema.Types.ObjectId,

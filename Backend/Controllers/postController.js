@@ -4,29 +4,20 @@ import cloudinary from '../Lib/cloudinaryConfig.js'
 
 export const createPosts = async (req, res) => {
   try {
-    console.log("Request Body:", req.body);
-
     // Destructure required fields
     const { heading, description, images, location, price, category, quantity, condition } = req.body;
     const author = req.user._id;
-
     // Check if all required fields are provided
     if (!heading || !description || !location || !price || !category || !quantity || !condition) {
       return res.status(400).json({ message: "All required fields must be provided." });
     }
-    
-    console.log("CLOUDINARY_CLOUD_NAME:",process.env.CLOUDINARY_CLOUD_NAME);
-    console.log("CLOUDINARY_API_KEY:",process.env.CLOUDINARY_API_KEY);
-    console.log("CLOUDINARY_API_SECRET:",process.env.CLOUDINARY_API_SECRET ? process.env.CLOUDINARY_API_SECRET : "NOT SET");
-    
+  
     // Upload single image to Cloudinary
     let uploadedImage = "";
 
     if (images){
       try {
-        console.log(req.body.images)
         const result = await  cloudinary.uploader.upload(req.body.images);
-        console.log("jbfv")
         uploadedImage = result.secure_url;
       } catch (uploadError) {
         console.error("Error uploading image to Cloudinary:", uploadError);
@@ -51,7 +42,7 @@ export const createPosts = async (req, res) => {
     await newPost.save();
 
     // Update user with new post reference
-    await User.findByIdAndUpdate(author, { $push: { Post: newPost._id } });
+    await User.findByIdAndUpdate(author, { $push: { posts: newPost._id } });
 
     // Success response
     res.status(201).json({ message: "Post created successfully", post: newPost });

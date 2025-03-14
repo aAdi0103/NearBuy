@@ -3,8 +3,10 @@ import { X, Upload, Camera, DollarSign, Tag, Package, Truck,MapPin } from "lucid
 import Navbar from "../../Layouts/Navbar";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { axiosInstance } from "../../lib/axios";
+import { toast, Toaster } from "react-hot-toast";
 
 const ProductListing = () => {
+
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
@@ -13,6 +15,12 @@ const ProductListing = () => {
   const [condition, setCondition] = useState("New");
   const [images, setImages] = useState([]);
   const [imagePreview, setImagePreview] = useState(null);
+
+  const [location, setLocation] = useState({
+    city: "",
+    state: "",
+    country: "",
+  });
 
   // getting the loggedIn user
   const { data: authUser, isLoading } = useQuery({
@@ -28,13 +36,6 @@ const ProductListing = () => {
         toast.error(err.response.data.message || "Something went wrong");
       }
     },
-  });
-
-
-  const [location, setLocation] = useState({
-    city: "",
-    state: "",
-    country: "",
   });
 
   const handleChange = (e) => {
@@ -59,6 +60,7 @@ const ProductListing = () => {
 			toast.error(err.response.data.message || "Failed to create post");
 		},
 	});
+  
 
 
   const handlePostCreation = async () => {
@@ -73,7 +75,6 @@ const ProductListing = () => {
 	};
 
 	const resetForm = () => {
-		setContent("");
 		setImages(null);
 		setImagePreview(null);
 	};
@@ -97,10 +98,9 @@ const ProductListing = () => {
 		});
 	};
 
-
-
   return (
     <>
+        <Toaster />
     <Navbar/>
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
@@ -155,6 +155,9 @@ const ProductListing = () => {
               </div>
 
             </div>
+
+            {/* location */}
+
             <div className="bg-gray-50 rounded-xl p-6 space-y-6">
       <div className="flex items-center">
         <MapPin className="w-6 h-6 text-blue-600 mr-2" />
@@ -250,6 +253,7 @@ const ProductListing = () => {
             </div>
 
             {/* Media */}
+
             <div className="space-y-4">
               <div className="flex items-center">
                 <Camera className="w-6 h-6 text-blue-600 mr-2" />
@@ -279,6 +283,8 @@ const ProductListing = () => {
 				</div>
 			)}
             </div>
+
+
 
 
             {/* Action Buttons */}

@@ -6,7 +6,7 @@ import cloudinary from '../Lib/cloudinaryConfig.js'
 
 export const createService = async (req, res) => {
     try {
-      const { title, description, images, location, availability,contactDetails,price, category } = req.body;
+      const { title, description, images, location,experience,price,duration,language, category } = req.body;
       const provider = req.user._id;
   
       let uploadedImages = [];
@@ -23,8 +23,9 @@ export const createService = async (req, res) => {
         description,
         images: uploadedImages,
         location,
-        availability,
-        contactDetails,
+        experience,
+        duration,
+        language,
         price,
         category,
         provider,
