@@ -34,6 +34,7 @@ function App() {
     },
   });
 
+  // console.log(authUser);
   
   if (isLoading) return null;
 
@@ -60,6 +61,7 @@ function App() {
     <Route path="/list" element={authUser ? <Listing/>: <Navigate to={"/login"} />} />
     <Route path="/list/Services" element={authUser ? <ServicesListings/>:<Navigate to={"/login"}/>} />
     <Route path="/list/Products" element={authUser ? <ProductListing/>:<Navigate to={"/login"}/>} />
+    <Route path="/edit/product/:id" element={authUser ? <EditProducts/>:<Navigate to={'/login'} />} /> 
    </Routes>
    </>
   )

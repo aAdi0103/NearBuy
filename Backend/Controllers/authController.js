@@ -32,8 +32,6 @@ export const signup = async (req, res) => {
 				country: location.country
 			}
 		});
-
-		console.log("User Before Save:", user); // Debugging log
 		await user.save();
 
 		// Generate JWT Token

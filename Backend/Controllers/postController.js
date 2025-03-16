@@ -2,6 +2,7 @@ import Post from "../Models/PostModel.js";
 import User from "../Models/UserModel.js"
 import cloudinary from '../Lib/cloudinaryConfig.js'
 
+
 export const createPosts = async (req, res) => {
   try {
     // Destructure required fields
@@ -42,7 +43,7 @@ export const createPosts = async (req, res) => {
     await newPost.save();
 
     // Update user with new post reference
-    await User.findByIdAndUpdate(author, { $push: { posts: newPost._id } });
+    // await User.findByIdAndUpdate(author, { $push: { posts: newPost._id } });
 
     // Success response
     res.status(201).json({ message: "Post created successfully", post: newPost });
@@ -52,73 +53,115 @@ export const createPosts = async (req, res) => {
   }
 };
 
-
-  export const deletePost = async (req, res) => {
-    try {
-        const postId = req.params.id;
-        const userId = req.user._id;
-
-        const post = await Post.findById(postId);
-
-        if (!post) {
-            return res.status(404).json({ message: "Post not found" });
-        }
-
-        // Check if the current user is the author of the post 
-        if (post.author.toString() !== userId.toString()) {
-            return res.status(403).json({ message: "You are not authorized to delete this post" });
-        }
-
-        // Delete all images from Cloudinary
-        if (post.images && post.images.length > 0) {
-            for (let imageUrl of post.images) {
-                const publicId = imageUrl.split("/").pop().split(".")[0];
-                await cloudinary.uploader.destroy(publicId);
-            }
-        }
-
-        // Delete the post from the database
-        await Post.findByIdAndDelete(postId);
-
-        // Remove the post reference from the user's posts array
-        await User.findByIdAndUpdate(userId, { $pull: { posts: postId } });
-        res.status(200).json({ message: "Post deleted successfully" });
-    } catch (error) {
-        console.log("Error in delete post controller:", error.message);
-        res.status(500).json({ message: "Server error" });
-    }
-}
-
-export const getCategories = async (req, res) => {
+// Controller to get posts by an array of id
+export const getPostsByIds = async (req, res) => {
   try {
-    const categories = await Post.distinct("category");
+    const { id } = req.params;
+    // console.log("Extracted id:", id);
 
-    if (!categories || categories.length === 0) {
-      return res.status(404).json({ message: "No categories found" });
+    if (!id) {
+      return res.status(400).json({ message: "Invalid post id" });
     }
 
-    console.log("Categories fetched:", categories);
-    res.json(categories);
+    const post = await Post.findById(id);
+
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    res.status(200).json(post);
   } catch (error) {
-    console.error("Error fetching categories:", error);
-    res.status(500).json({ error: "Failed to fetch categories" });
+    console.error("Error fetching post:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
 
+export const getFeedPosts = async function (req, res) {
+  try {
+    const userId = req.user.id; // Get the logged-in user's ID
 
+    const posts = await Post.find({ author: userId }) 
+      .sort({ createdAt: -1 });
 
+    res.status(200).json(posts);
+  } catch (error) {
+    console.error("Error in getUserPosts: ", error.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 
-// export const getPostById = async (req, res) => {
-// 	try {
-// 		const postId = req.params.id;
-// 		const post = await Post.findById(postId)
-// 			.populate("author", "name username profilePicture headline")
-// 			.populate("comments.user", "name profilePicture username headline");
+export const deletePost = async (req, res) => {
+  try {
+    const postId = req.params.id;
+    const userId = req.user._id;
 
-// 		res.status(200).json(post);
-// 	} catch (error) {
-// 		console.error("Error in getPostById controller:", error);
-// 		res.status(500).json({ message: "Server error" });
-// 	}
-// };
+    const post = await Post.findById(postId);
+
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    // Checking if the current user is the author of the post
+    if (post.author.toString() !== userId.toString()) {
+      console.log("not authorized");
+      return res.status(403).json({ message: "You are not authorized to delete this post" });
+    }
+
+    // Delete the image from Cloudinary
+    if (post.images) {
+      await cloudinary.uploader.destroy(post.images.split("/").pop().split(".")[0]);
+    }
+
+    // Remove post ID from the user's posts array
+    await User.findByIdAndUpdate(userId, { $pull: { posts: postId } });
+
+    // Delete the post from the database
+    await Post.findByIdAndDelete(postId);
+
+    res.status(200).json({ message: "Post deleted successfully" });
+  } catch (error) {
+    console.log("Error in delete post controller", error.message);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const updatePostt = async (req,res) =>{
+  
+try {
+  const {id} = req.params;
+  console.log(req.body);
+    const allowedFields = ["heading", "description", "images","location","price","condition","category"];
+    const updatedData = {};
+    for (const field of allowedFields) {
+      if (req.body[field]) {
+        updatedData[field] = req.body[field];
+      }
+    }
+    // Handle profile picture upload
+    if (req.body.images) {
+      try{
+      const result = await cloudinary.uploader.upload(req.body.images);
+      updatedData.images = result.secure_url;
+      }catch(error){
+      }
+    }
+
+    // Ensure user exists before updating
+    const post = await Post.findByIdAndUpdate(
+      id, // Ensures only the logged-in user can update their profile
+      { $set: updatedData },
+      { new: true, select: "-password" } // Exclude password field from response
+    );
+
+    if (!post) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json(post);
+  }
+   catch (error) {
+    console.error("Error in updateProfile controller:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+}

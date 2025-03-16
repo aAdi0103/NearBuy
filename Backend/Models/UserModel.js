@@ -36,18 +36,6 @@ const UserSchema = new mongoose.Schema({
     Phone: {
          type:String
     },
-    posts: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Post" // Refers to the Post model
-        }
-    ],
-    services: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Service" // Refers to the Service model
-        }
-    ],
     createdAt: {
         type: Date,
         default: Date.now

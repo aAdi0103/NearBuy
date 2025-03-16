@@ -3,7 +3,6 @@ import cloudinary from '../Lib/cloudinaryConfig.js'
 
 export const updateProfile = async (req, res) => {
 	try {
-		console.log(req.body);
 		const allowedFields = ["name", "profilePic", "location","role","About","Phone"];
 		const updatedData = {};
 		for (const field of allowedFields) {

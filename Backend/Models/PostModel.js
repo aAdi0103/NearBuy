@@ -8,7 +8,7 @@ const PostSchema = new mongoose.Schema({
     },
     description: {
         type: String,
-        required: true,
+        // required: true,
         maxlength: 1000
     },
     images:{
@@ -27,17 +27,17 @@ const PostSchema = new mongoose.Schema({
     },
     quantity:{
         type:Number,
-        required: true,
+        // required: true,
     },
     condition:{
         type: String,
         enum: ["New", "Like New", "Used", "Refurbished"],
-        required: true
+        // required: true
     },
     category: {
         type: String,
         enum: ["Real Estate", "Electronics","Sports","Books","Others"],
-        required: true
+        // required: true
     },   
     datePosted: {
         type: Date,

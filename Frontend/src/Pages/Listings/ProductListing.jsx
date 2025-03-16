@@ -52,7 +52,7 @@ const ProductListing = () => {
 			return res.data;
 		},
 		onSuccess: () => {
-			resetForm();
+			// resetForm();
 			toast.success("Post created successfully");
 			queryClient.invalidateQueries({ queryKey: ["posts"] });
 		},
@@ -61,7 +61,6 @@ const ProductListing = () => {
 		},
 	});
   
-
 
   const handlePostCreation = async () => {
 		try {

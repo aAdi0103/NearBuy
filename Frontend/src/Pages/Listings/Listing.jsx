@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 function Listing() {
   return (
@@ -9,20 +10,20 @@ function Listing() {
         </h1>
         <div className="flex flex-col gap-4">
           {/* Services Button */}
-          <a
-            href="/list/Services"
-            className="bg-blue-600 text-white py-3 px-6 rounded-lg font-medium text-lg shadow-md hover:bg-blue-700 transition flex items-center justify-center"
-          >
-            List Services
-          </a>
+          <Link
+  to="/list/Services"
+  className="bg-green-600 text-white py-3 px-6 rounded-lg font-medium text-lg shadow-md hover:bg-green-700 transition flex items-center justify-center"
+>
+  List Services
+</Link>
 
           {/* Products Button */}
-          <a
-            href="/list/Products"
-            className="bg-green-600 text-white py-3 px-6 rounded-lg font-medium text-lg shadow-md hover:bg-green-700 transition flex items-center justify-center"
-          >
-            List Products
-          </a>
+          <Link
+  to="/list/Products"
+  className="bg-green-600 text-white py-3 px-6 rounded-lg font-medium text-lg shadow-md hover:bg-green-700 transition flex items-center justify-center"
+>
+  List Products
+</Link>
         </div>
       </div>
     </div>
