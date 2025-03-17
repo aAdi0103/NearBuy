@@ -16,12 +16,9 @@ const ServiceSchema = new mongoose.Schema({
         enum: ["Fitness", "Business", "Education", "IT", "Photography", "others"],
         required: true
     },
-    images: [
-        {
-            type: String, // Store service-related image URLs
-            required: true
-        }
-    ],
+    images:{
+        type: String, // Store image URLs
+    },
     location: {
         city: String,
         state: String,
@@ -42,10 +39,10 @@ const ServiceSchema = new mongoose.Schema({
         enum: ["30 Minutes", "1 Hour", "2 Hours"],
         required: true
     },
-    language:{
-       type:[String],
-       required:true
-    },
+    language: {
+        type: [String], // This ensures it's an array of strings
+        required: true,
+      },
     provider: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User", // Refers to the User model (service provider)

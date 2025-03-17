@@ -73,6 +73,7 @@ const ProductListing = () => {
 		}
 	};
 
+  
 	const resetForm = () => {
 		setImages(null);
 		setImagePreview(null);

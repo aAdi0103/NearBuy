@@ -1,6 +1,7 @@
 import Post from "../Models/PostModel.js";
 import User from "../Models/UserModel.js"
 import cloudinary from '../Lib/cloudinaryConfig.js'
+// import Product from "../../Frontend/src/Pages/Product.jsx";
 
 
 export const createPosts = async (req, res) => {
@@ -57,7 +58,7 @@ export const createPosts = async (req, res) => {
 export const getPostsByIds = async (req, res) => {
   try {
     const { id } = req.params;
-    // console.log("Extracted id:", id);
+    console.log("Extracted id:", id);
 
     if (!id) {
       return res.status(400).json({ message: "Invalid post id" });
@@ -163,5 +164,15 @@ try {
    catch (error) {
     console.error("Error in updateProfile controller:", error);
     res.status(500).json({ message: "Server error" });
+  }
+}
+
+export const getAllProducts = async (req,res) =>{
+  try {
+    const products = await Post.find(); 
+    res.status(200).json(products);
+  } catch (error) {
+    console.error("Error fetching Products:", error);
+    res.status(500).json({ message: "Error fetching Products", error: error.message });
   }
 }

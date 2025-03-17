@@ -5,7 +5,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { axiosInstance } from "../lib/axios";
 import { toast, Toaster } from "react-hot-toast";
 import { useParams } from "react-router-dom";
-import axios from 'axios'
 
 
 const EditProducts = () => {
@@ -101,7 +100,6 @@ useEffect(() => {
 		},
 	});
 
-
   const handlePostUpdation = async () => {
     try {
       const postData = { heading: title, category, description, price, quantity, condition, location };
@@ -112,14 +110,12 @@ useEffect(() => {
       } else {
         postData.images = imagePreview; // Keep existing images if no new images are selected
       }
-     console.log(postData)
       updatePostMutation(postData);
     } catch (error) {
       console.error("Error in handlePostUpdation:", error);
     }
   };
   
-
   const handleChange = (e) => {
     setLocation({ ...location, [e.target.name]: e.target.value });
   };
@@ -337,10 +333,10 @@ useEffect(() => {
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6 border-t">
               <button className="text-gray-600 hover:text-gray-900 transition-colors">Cancel</button>
               <div className="flex flex-col sm:flex-row gap-3">
-                <button className="px-6 py-2.5 text-white bg-blue-600 rounded-xl hover:bg-blue-700 shadow-sm hover:shadow transition-all duration-200"
+                <button className="px-6 py-2.5 text-white bg-yellow-600 rounded-xl hover:bg-blue-700 shadow-sm hover:shadow transition-all duration-200"
                 onClick={handlePostUpdation}
                 >
-                  Publish Listing
+                  Update Product
                 </button>
               </div>
             </div>

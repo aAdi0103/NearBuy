@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Navbar from "../../Layouts/Navbar";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { axiosInstance } from "../../lib/axios";
-
+import { toast, Toaster } from "react-hot-toast";
 import {
   X,
   Upload,
@@ -21,7 +21,7 @@ function ServiceListing() {
   const [duration, setDuration] = useState("");
   const [experienceLevel, setExperienceLevel] = useState("");
   const [description,setDescription]=useState("");
-  const [languages, setLanguages] = useState([]);
+  const [language, setlanguage] = useState([]);
   const [location, setLocation] = useState({
     city: "",
     state: "",
@@ -29,7 +29,7 @@ function ServiceListing() {
   });
 
   const [images, setImages] = useState([]);
-  const [imagePreview, setImagePreview] = useState([]);
+  const [imagePreview, setImagePreview] = useState(null);
 
   const queryClient = useQueryClient();
 
@@ -60,20 +60,13 @@ function ServiceListing() {
         price,
         duration,
         location,
-        languages,
+        language,
         experience:experienceLevel,
         description,
         category:selectedCategory,
       };
   
-      console.log("Before adding images:", serviceData);
-  
-      if (images.length > 0) {
-        serviceData.images = await Promise.all(images.map(readFileAsDataURL)); // Convert all images to base64
-      }
-  
-      console.log("After adding images:", serviceData);
-  
+      if (images) serviceData.images = await readFileAsDataURL(images);  
       createPostMutation(serviceData);
     } catch (error) {
       console.error("Error creating service:", error);
@@ -82,30 +75,27 @@ function ServiceListing() {
   
 
   const handleImageUpload = (e) => {
-    const files = Array.from(e.target.files);
-    
-    // Store images in state
-    setImages((prevImages) => [...prevImages, ...files]);
-  
-    // Read files and generate previews
-    Promise.all(files.map(readFileAsDataURL))
-      .then((previews) => {
-        setImagePreview((prevPreviews) => [...prevPreviews, ...previews]); // ✅ Now prevPreviews is always an array
-      })
-      .catch((error) => console.error("Error reading files:", error));
-  };
+		const file = e.target.files[0];
+		setImages(file);
+		if (file) {
+			readFileAsDataURL(file).then(setImagePreview);
+		} else {
+			setImagePreview(null);
+		}
+	};
   
   const readFileAsDataURL = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  };
+		return new Promise((resolve, reject) => {
+			const reader = new FileReader();
+			reader.onloadend = () => resolve(reader.result);
+			reader.onerror = reject;
+			reader.readAsDataURL(file);
+		});
+	};
 
   return (
     <>
+    <Toaster/>
       <Navbar />
       <div className="min-h-screen bg-gray-100 flex justify-center items-center p-6">
         <div className="bg-white p-6 md:p-10 rounded-2xl shadow-lg w-full max-w-4xl">
@@ -186,27 +176,17 @@ function ServiceListing() {
                   className="cursor-pointer inline-flex flex-col items-center"
                 >
                   <Upload className="w-12 h-12 text-blue-600 mb-3" />
-                  <span className="text-sm text-gray-600">
-                    Click to upload images
-                  </span>
-                  <span className="text-xs text-gray-500 mt-1">
-                    Supported formats: JPG, PNG, GIF
-                  </span>
+                  <span className="text-sm text-gray-600">Click to upload images</span>
+                  <span className="text-xs text-gray-500 mt-1">Supported formats: JPG, PNG, GIF</span>
                 </label>
               </div>
-              {imagePreview.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {imagePreview.map((preview, index) => (
-                    <img
-                      key={index}
-                      src={preview}
-                      alt={`Selected ${index}`}
-                      className="w-20 h-20 rounded-lg"
-                    />
-                  ))}
-                </div>
-              )}
+              {imagePreview && (
+				<div className='mt-2'>
+					<img src={imagePreview} alt='Selected' className='w-full h-auto rounded-lg' />
+				</div>
+			)}
             </div>
+
           </div>
 
           {/* Pricing & Availability */}
@@ -316,14 +296,14 @@ function ServiceListing() {
 
             <div>
               <label className="block font-semibold text-gray-700">
-                Languages Spoken
+                language Spoken
               </label>
               <input
                 type="text"
                 placeholder="e.g., English, Spanish, Hindi"
                 className="w-full p-3 mt-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                value={languages}
-                onChange={(e) => setLanguages(e.target.value.split(","))}
+                value={language}
+                onChange={(e) => setlanguage(e.target.value.split(","))}
               />
             </div>
           </div>

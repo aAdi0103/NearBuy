@@ -32,12 +32,13 @@ const PostSchema = new mongoose.Schema({
     condition:{
         type: String,
         enum: ["New", "Like New", "Used", "Refurbished"],
-        // required: true
+        required: true
+
     },
     category: {
         type: String,
         enum: ["Real Estate", "Electronics","Sports","Books","Others"],
-        // required: true
+        required: true
     },   
     datePosted: {
         type: Date,
