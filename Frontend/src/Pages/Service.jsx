@@ -133,7 +133,7 @@ const Service = () => {
                     <p>{service.category}</p>
                     <div className="flex justify-between items-center mt-4">
                       <span className="text-xl font-bold text-blue-600">
-                        ${service.price}/{" "}
+                      ₹{service.price}/{" "}
                         <span className="text-xs text-black">
                           {service.duration}
                         </span>{" "}

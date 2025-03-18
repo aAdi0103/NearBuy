@@ -39,8 +39,25 @@ export const updateProfile = async (req, res) => {
 };
 
 export const getPublicProfile = async (req, res) => {
-	try {
-		const user = await User.findOne({ _id: req.params.id }).select("-password");
+	try { 
+          const {id} = req.params;
+		  console.log("wdcf",id)
+		const user = await User.findOne({ _id: id }).select("-password");
+
+		if (!user) {
+			return res.status(404).json({ message: "User not found" });
+		}
+
+		res.json(user);
+	} catch (error) {
+		console.error("Error in getPublicProfile controller:", error);
+		res.status(500).json({ message: "Server error" });
+	}
+};
+export const FromEmail = async (req, res) => {
+	try { 
+          const {id} = req.params;
+		const user = await User.findOne({ email: id }).select("-password");
 
 		if (!user) {
 			return res.status(404).json({ message: "User not found" });

@@ -154,8 +154,6 @@ try {
 export const getServiceById = async (req, res) => {
   try {
     const { id } = req.params;
-    // console.log("Extracted id:", id);
-
     if (!id) {
       return res.status(400).json({ message: "Invalid Service id" });
     }
@@ -181,5 +179,27 @@ export const getAllServices = async (req, res) => {
   } catch (error) {
     console.error("Error fetching services:", error);
     res.status(500).json({ message: "Error fetching services", error: error.message });
+  }
+};
+
+
+export const getServicesId = async (req, res) => {
+  try {
+    const { email } = req.params;
+    if (!email) {
+      return res.status(400).json({ error: "Email parameter is missing" });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const services = await Service.find({ provider: user._id }).sort({ createdAt: -1 });
+
+    return res.json(services);
+  } catch (err) {
+    console.error("Error fetching posts:", err);
+    res.status(500).json({ error: "Server error" });
   }
 };

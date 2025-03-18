@@ -58,7 +58,6 @@ export const createPosts = async (req, res) => {
 export const getPostsByIds = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log("Extracted id:", id);
 
     if (!id) {
       return res.status(400).json({ message: "Invalid post id" });
@@ -131,7 +130,6 @@ export const updatePostt = async (req,res) =>{
   
 try {
   const {id} = req.params;
-  console.log(req.body);
     const allowedFields = ["heading", "description", "images","location","price","condition","category"];
     const updatedData = {};
     for (const field of allowedFields) {
@@ -176,3 +174,25 @@ export const getAllProducts = async (req,res) =>{
     res.status(500).json({ message: "Error fetching Products", error: error.message });
   }
 }
+
+
+export const getFeedPostsID = async (req, res) => {
+  try {
+    const { email } = req.params;
+    if (!email) {
+      return res.status(400).json({ error: "Email parameter is missing" });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const posts = await Post.find({ author: user._id }).sort({ createdAt: -1 });
+
+    return res.json(posts);
+  } catch (err) {
+    console.error("Error fetching posts:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+};
