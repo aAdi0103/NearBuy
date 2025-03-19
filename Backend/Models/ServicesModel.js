@@ -20,10 +20,13 @@ const ServiceSchema = new mongoose.Schema({
         type: String, // Store image URLs
     },
     location: {
+        area:String,
         city: String,
         state: String,
         country: String
     },
+    latitude: Number,
+    longitude: Number,  
     price: {
         type: Number,
         required: true,

@@ -1,8 +1,20 @@
 import Post from "../Models/PostModel.js";
 import User from "../Models/UserModel.js"
 import cloudinary from '../Lib/cloudinaryConfig.js'
-// import Product from "../../Frontend/src/Pages/Product.jsx";
 
+import axios from "axios";
+const getCoordinates = async (address) => {
+  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json`;
+
+  const response = await axios.get(url);
+  if (response.data.length > 0) {
+    return {
+      lat: parseFloat(response.data[0].lat),
+      lng: parseFloat(response.data[0].lon),
+    };
+  }
+  throw new Error("Coordinates not found");
+};
 
 export const createPosts = async (req, res) => {
   try {
@@ -13,6 +25,12 @@ export const createPosts = async (req, res) => {
     if (!heading || !description || !location || !price || !category || !quantity || !condition) {
       return res.status(400).json({ message: "All required fields must be provided." });
     }
+
+      // Format location object into a single string for geocoding
+      const locationString = `${location.area}, ${location.city}, ${location.state}, ${location.country}`;
+
+      // Get latitude and longitude from the formatted location string
+      const { lat, lng } = await getCoordinates(locationString);
   
     // Upload single image to Cloudinary
     let uploadedImage = "";
@@ -38,13 +56,12 @@ export const createPosts = async (req, res) => {
       price,
       category,
       author,
+      latitude:lat,
+      longitude:lng
     });
 
     // Save post to database
     await newPost.save();
-
-    // Update user with new post reference
-    // await User.findByIdAndUpdate(author, { $push: { posts: newPost._id } });
 
     // Success response
     res.status(201).json({ message: "Post created successfully", post: newPost });
@@ -137,6 +154,14 @@ try {
         updatedData[field] = req.body[field];
       }
     }
+
+    const {location}=req.body;
+    const locationString = `${location.area}, ${location.city}, ${location.state}, ${location.country}`;
+
+    const { lat, lng } = await getCoordinates(locationString);
+    updatedData.latitude = lat;
+    updatedData.longitude = lng;
+
     // Handle profile picture upload
     if (req.body.images) {
       try{
@@ -194,5 +219,91 @@ export const getFeedPostsID = async (req, res) => {
   } catch (err) {
     console.error("Error fetching posts:", err);
     res.status(500).json({ error: "Server error" });
+  }
+};
+
+
+export const getNearbyProducts = async (req, res) => {
+  // Extract parameters from the request query
+  const { lat, lng, radius } = req.query;
+
+  // Validate parameters
+  if (!lat || !lng || !radius) {
+    return res.status(400).json({ message: "Missing parameters" });
+  }
+
+  // Convert to numbers
+  const userLat = parseFloat(lat);
+  const userLng = parseFloat(lng);
+  const maxDistance = parseFloat(radius);
+
+  if (isNaN(userLat) || isNaN(userLng) || isNaN(maxDistance)) {
+    return res.status(400).json({ message: "Invalid latitude, longitude, or radius" });
+  }
+
+  try {
+    // Fetch all services
+    const products = await Post.find();
+
+    if (!products.length) {
+      return res.status(404).json({ message: "No products available" });
+    }
+
+    // Haversine formula to calculate the distance between two coordinates
+    const getDistance = (lat1, lon1, lat2, lon2) => {
+      const R = 6371; // Earth's radius in km
+      const dLat = (lat2 - lat1) * (Math.PI / 180);
+      const dLon = (lon2 - lon1) * (Math.PI / 180);
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    };
+
+    // Filter nearby services based on distance
+    const nearbyProducts = products.filter(Product => {
+      if (!Product.latitude || !Product.longitude) return false;
+      const distance = getDistance(userLat, userLng, Product.latitude, Product.longitude);
+      return distance <= maxDistance;
+    });
+
+    // Ensure data is only returned when there are nearby services
+    if (nearbyProducts.length > 0) {
+      return res.json(nearbyProducts);
+    } else {
+      return res.json([]); // ✅ Message instead of 404 error
+    }
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+
+export const getSearchedProducts = async (req, res) => {
+  try {
+    const { location, search } = req.query;
+    const productString = String(search);
+    const coordinates = await getCoordinates(location);
+
+    if (!coordinates) {
+      return res.status(400).json({ message: "Invalid location, please select another." });
+    }
+
+    const query = {
+      latitude: { $gte: coordinates.lat - 0.1, $lte: coordinates.lat + 0.1 },
+      longitude: { $gte: coordinates.lng - 0.1, $lte: coordinates.lng + 0.1 },
+      $or: [
+        { heading: { $regex: productString, $options: "i" } },
+        { category: { $regex: productString, $options: "i" } },
+      ],
+    };
+    const products = await Post.find(query);
+    res.json(products);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error fetching products" });
   }
 };

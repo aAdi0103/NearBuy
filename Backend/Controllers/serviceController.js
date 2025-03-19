@@ -1,27 +1,42 @@
 import Service from "../Models/ServicesModel.js";
 import User from "../Models/UserModel.js";
 import cloudinary from "../Lib/cloudinaryConfig.js";
+import axios from "axios";
+const getCoordinates = async (address) => {
+  try {
+    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json`;
+    const response = await axios.get(url);
+
+    if (response.data.length > 0) {
+      return {
+        lat: parseFloat(response.data[0].lat),
+        lng: parseFloat(response.data[0].lon),
+      };
+    }
+
+    throw new Error("Coordinates not found");
+  } catch (error) {
+    return null; // Return null if no coordinates found
+  }
+};
+
 
 export const createService = async (req, res) => {
   try {
-    const {
-      title,
-      description,
-      images,
-      location,
-      experience,
-      price,
-      duration,
-      language,
-      category,
-    } = req.body;
+    const { title, description, images, location, experience, price, duration, language, category } = req.body;
     const provider = req.user._id;
+
+    // Format location object into a single string for geocoding
+    const locationString = `${location.area}, ${location.city}, ${location.state}, ${location.country}`;
+
+    // Get latitude and longitude from the formatted location string
+    const { lat, lng } = await getCoordinates(locationString);
 
     let uploadedImage = "";
 
-    if (images){
+    if (images) {
       try {
-        const result = await  cloudinary.uploader.upload(req.body.images);
+        const result = await cloudinary.uploader.upload(images);
         uploadedImage = result.secure_url;
       } catch (uploadError) {
         console.error("Error uploading image to Cloudinary:", uploadError);
@@ -29,19 +44,21 @@ export const createService = async (req, res) => {
       }
     }
 
-        // Ensure language is properly formatted as an array of strings
-        const formattedLanguages = Array.isArray(language)
-        ? language.map(lang => lang.trim()) // Convert and trim spaces
-        : [language.trim()]; // If a single string, wrap in an array
+    // Ensure language is formatted as an array of strings
+    const formattedLanguages = Array.isArray(language)
+      ? language.map(lang => lang.trim())
+      : [language.trim()];
 
     const newService = new Service({
       title,
       description,
       images: uploadedImage,
-      location,
+      location, // Keeping the object structure
+      latitude: lat,
+      longitude: lng,
       experience,
       duration,
-      language: formattedLanguages, // Ensuring array
+      language: formattedLanguages,
       price,
       category,
       provider,
@@ -50,12 +67,13 @@ export const createService = async (req, res) => {
     await newService.save();
     await User.findByIdAndUpdate(provider, { $push: { services: newService._id } });
 
-    res.status(201).json({ message: "Service created successfully" });
+    res.status(201).json({ message: "Service created successfully", service: newService });
   } catch (error) {
-    console.error("Error in createService controller:", error);
-    res.status(500).json({ message: "Server error" });
+    console.error("Error in addService controller:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
 
 
 export const deleteService = async (req, res) => {
@@ -115,7 +133,6 @@ export const updateService = async (req,res) =>{
   
 try {
   const {id} = req.params;
-  console.log(req.body);
     const allowedFields = ["title", "description", "images","location","price","duration","category","experience","language"];
     const updatedData = {};
     for (const field of allowedFields) {
@@ -123,6 +140,14 @@ try {
         updatedData[field] = req.body[field];
       }
     }
+  const {location}=req.body;
+    const locationString = `${location.area}, ${location.city}, ${location.state}, ${location.country}`;
+
+    // Get latitude and longitude from the formatted location string
+    const { lat, lng } = await getCoordinates(locationString);
+    updatedData.latitude = lat;
+    updatedData.longitude = lng;
+
     // Handle profile picture upload
     if (req.body.images) {
       try{
@@ -203,3 +228,89 @@ export const getServicesId = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
+
+
+export const getNearbyServices = async (req, res) => {
+
+  // Extract parameters from the request query
+  const { lat, lng, radius } = req.query;
+
+  // Validate parameters
+  if (!lat || !lng || !radius) {
+    return res.status(400).json({ message: "Missing parameters" });
+  }
+
+  // Convert to numbers
+  const userLat = parseFloat(lat);
+  const userLng = parseFloat(lng);
+  const maxDistance = parseFloat(radius);
+
+  if (isNaN(userLat) || isNaN(userLng) || isNaN(maxDistance)) {
+    return res.status(400).json({ message: "Invalid latitude, longitude, or radius" });
+  }
+
+  try {
+    // Fetch all services
+    const services = await Service.find();
+
+    if (!services.length) {
+      return res.status(404).json({ message: "No services available" });
+    }
+
+    // Haversine formula to calculate the distance between two coordinates
+    const getDistance = (lat1, lon1, lat2, lon2) => {
+      const R = 6371; // Earth's radius in km
+      const dLat = (lat2 - lat1) * (Math.PI / 180);
+      const dLon = (lon2 - lon1) * (Math.PI / 180);
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    };
+
+    // Filter nearby services based on distance
+    const nearbyServices = services.filter(service => {
+      if (!service.latitude || !service.longitude) return false;
+      const distance = getDistance(userLat, userLng, service.latitude, service.longitude);
+      return distance <= maxDistance;
+    });
+
+    // Ensure data is only returned when there are nearby services
+    if (nearbyServices.length > 0) {
+      return res.json(nearbyServices);
+    } else {
+      return res.json([]); // ✅ Message instead of 404 error
+    }
+  } catch (error) {
+    console.error("Error fetching services:", error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const getSearchedServices = async (req, res) => {
+  try {
+    const { location, search } = req.query;
+    const serviceString = String(search);
+    const coordinates = await getCoordinates(location);
+    if (!coordinates) {
+      return res.status(400).json({ message: "Invalid location, please select another." });
+    }
+
+    const query = {
+      latitude: { $gte: coordinates.lat - 0.1, $lte: coordinates.lat + 0.1 },
+      longitude: { $gte: coordinates.lng - 0.1, $lte: coordinates.lng + 0.1 },
+      $or: [
+        { title: { $regex: serviceString, $options: "i" } },
+        { category: { $regex: serviceString, $options: "i" } },
+      ],
+    };
+    const services = await Service.find(query);
+    res.json(services);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error fetching services" });
+  }
+};
+

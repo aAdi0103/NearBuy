@@ -77,6 +77,18 @@ function ProfileHeader({ userData, onSave }) {
       </div>
       
       <div className="grid grid-cols-3 gap-3">
+      <input
+          type="text"
+          value={editedData.location?.area || ""}
+          onChange={(e) =>
+            setEditedData({
+              ...editedData,
+              location: { ...editedData.location, area: e.target.value },
+            })
+          }
+          className="px-4 py-2.5 text-gray-600 bg-white rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-300 outline-none"
+          placeholder="Area"
+        />
         <input
           type="text"
           value={editedData.location?.city || ""}

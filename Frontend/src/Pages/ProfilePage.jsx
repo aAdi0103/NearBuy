@@ -200,7 +200,7 @@ const ProfilePage = () => {
     <h2 className="text-2xl font-bold">{FromEmail.name}</h2>
     <p className="text-gray-500">{FromEmail.role}</p>
     <p className="text-gray-600 flex items-center gap-1">
-      📍 {FromEmail.location.city}, {FromEmail.location.state},{" "}
+      📍{FromEmail.location.area},{FromEmail.location.city}, {FromEmail.location.state},{" "}
       {FromEmail.location.country}
     </p>
 

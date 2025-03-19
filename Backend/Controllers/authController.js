@@ -2,21 +2,39 @@ import User from "../Models/UserModel.js";
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
 
+import axios from 'axios'
+const getCoordinates = async (address) => {
+  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json`;
+
+  const response = await axios.get(url);
+  if (response.data.length > 0) {
+    return {
+      lat: parseFloat(response.data[0].lat),
+      lng: parseFloat(response.data[0].lon),
+    };
+  }
+  throw new Error("Coordinates not found");
+};
 
 export const signup = async (req, res) => {
 	try {
 		const { name, email, password, location } = req.body;
 
 		// Validate required fields
-		if (!name || !email || !password || !location || !location.city || !location.state || !location.country) {
+		if (!name || !email || !password || !location || !location.area||!location.city || !location.state || !location.country) {
 			return res.status(400).json({ message: "All fields including location (city, state, country) are required" });
 		}
+
 
 		const existingUser = await User.findOne({ email });
 		if (existingUser) {
 			return res.status(400).json({ message: "Email already exists" });
 		}
 
+		const locationString = `${location.area}, ${location.city}, ${location.state}, ${location.country}`;
+
+		// Get latitude and longitude from the formatted location string
+		const { lat, lng } = await getCoordinates(locationString);
 		// Hash password
 		const salt = await bcrypt.genSalt(10);
 		const hashedPassword = await bcrypt.hash(password, salt);
@@ -27,10 +45,13 @@ export const signup = async (req, res) => {
 			email,
 			password: hashedPassword,
 			location: {
+				area:location.area,
 				city: location.city,
 				state: location.state,
 				country: location.country
-			}
+			},
+			latitude:lat,
+			longitude:lng
 		});
 		await user.save();
 

@@ -1,10 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
+import { useLocation, useNavigate } from "react-router-dom";
 import { axiosInstance } from "../lib/axios";
 import { useState } from "react";
 import Navbar from "../Layouts/Navbar";
 import { Camera, Tag, MapPin } from 'lucide-react';
+import {FaArrowLeft } from "react-icons/fa";
 
 const Product = () => {
+  const navigate = useNavigate();
+
   // Fetch Auth User
   const { data: authUser } = useQuery({
     queryKey: ["authUser"],
@@ -63,6 +67,13 @@ const Product = () => {
   return (
     <>
       <div className="w-screen min-w-full mx-auto p-6 flex gap-6">
+
+         <button 
+                  onClick={() => navigate(-1)} 
+                  className="absolute top-10 text-xl left-5 flex items-center text-black-700 hover:text-blue-900 transition-all"
+                >
+                  <FaArrowLeft className="mr-2 text-md" /> <span className="font-medium">Back</span>
+                </button>
 
         {/* Sidebar - Filters */}
         <div className="w-1/4 h-[85vh] bg-zinc-200 p-4 shadow-md rounded-lg hidden md:block">

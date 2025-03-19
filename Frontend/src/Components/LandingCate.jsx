@@ -3,6 +3,7 @@ import { Facebook, Instagram, Linkedin } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "../lib/axios";
 import Newest from "../Layouts/Newest";
+import NewestProducts from "../Layouts/NewestProducts";
 
 function CategoryCard({ icon, title, listings }) {
   return (
@@ -21,7 +22,7 @@ const sendEmail = () => {
   window.location.href = "mailto:ak0755591@gmail.com,aditya21sharma2003@gmail.com?subject=Hello&body=Type your message here...";
 };
 
-function App() {
+const LandingCate = ({userLocation}) => {
   const { data: authUser, isLoading } = useQuery({
     queryKey: ["authUser"],
     queryFn: async () => {
@@ -68,9 +69,8 @@ function App() {
 
 
 
-
-     <Newest></Newest>
-
+     <NewestProducts userLocation={userLocation} authUser={authUser}></NewestProducts>
+     <Newest userLocation={userLocation} authUser={authUser} ></Newest>
 
 
     {/* Features */}
@@ -168,4 +168,4 @@ function App() {
   );
 }
 
-export default App;
+export default LandingCate;

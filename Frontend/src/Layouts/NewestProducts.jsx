@@ -4,13 +4,13 @@ import { axiosInstance } from "../lib/axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
-const Newest = ({userLocation, setUserLocation }) => {
+const NewestProducts = ({userLocation, setUserLocation }) => {
 
-  const [services, setServices] = useState([]);
+  const [products, setproducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [Allservices,setAllServices]=useState([]);
   const navigate = useNavigate();
+  const [allProducts,setAllProducts] = useState([]);
   const { data: authUser, isLoading } = useQuery({
     queryKey: ["authUser"],
     queryFn: async () => {
@@ -46,21 +46,19 @@ const Newest = ({userLocation, setUserLocation }) => {
     setError(null);
   
     axiosInstance
-      .get(`/services/current/nearby?lat=${lat}&lng=${lng}&radius=15`)
+      .get(`/posts/current/nearby?lat=${lat}&lng=${lng}&radius=15`)
       .then((res) => {
         const data = res.data || [];
-        setAllServices(data);
-        setServices(Array.isArray(data) ? data.slice(-4) : []);
+        setAllProducts(data);
+        setproducts(Array.isArray(data) ? data.slice(-4) : []);
       })
       .catch((err) => {
-        console.error("Error fetching services:", err);
-        setError("Failed to load services");
+        console.error("Error fetching products:", err);
+        setError("Failed to load products");
       })
       .finally(() => setLoading(false));
   
   }, [authUser, userLocation]); // Runs when authUser or userLocation updates
-  
-
   const requestLocationAccess = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -72,7 +70,7 @@ const Newest = ({userLocation, setUserLocation }) => {
         },
         (error) => {
           console.error("Error getting location:", error);
-          alert("Location access denied. Please enable location services.");
+          alert("Location access denied. Please enable location products.");
         }
       );
     } else {
@@ -84,27 +82,26 @@ const Newest = ({userLocation, setUserLocation }) => {
     <div className="max-w-7xl mt-20 mx-auto sm:px-6 lg:px-8">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-semibold mb-6 text-blue-700">
-          {authUser?.location?.city ? `Explore Services near you
- ` : "Explore Services near you"}
+          {authUser?.location?.city ? ` Explore Products near you ` : "Explore Products near you "}
         </h2>
 
         <Link
-          to="/viewall/services"
-          state={{ Allservices }}
+          to="/viewall/Products"
+          state={{ allProducts }}
           className="text-blue-700 font-semibold flex items-center"
-        > 
+        >
           View All <ArrowRight className="ml-1" size={18} />
         </Link>
       </div>
 
-      {loading && <p className="text-gray-600">Loading services...</p>}
+      {loading && <p className="text-gray-600">Loading products...</p>}
       {error && <p className="text-red-600">{error}</p>}
 
       {!authUser && !userLocation ? (
         <div className="text-center mt-10">
           <p className="text-gray-600 text-lg mb-4">
             Please <span className="font-semibold">sign in</span> or{" "}
-            <span className="font-semibold">allow location</span> to see services near you.
+            <span className="font-semibold">allow location</span> to see products near you.
           </p>
           <div className="flex justify-center gap-4">
             <button
@@ -121,38 +118,41 @@ const Newest = ({userLocation, setUserLocation }) => {
             </button>
           </div>
         </div>
-      ) : services.length > 0 ? (
+      ) : products.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {services.map((service) => (
+          {products.map((product) => (
             <div
-            key={service._id}
+            key={product._id}
             className="bg-white shadow-lg rounded-lg p-4 hover:scale-105 transition-transform duration-300"
           >
             {/* Image Section */}
             <img
-              src={service.images || "https://via.placeholder.com/300"}
-              alt={service.title}
+              src={product.images || "https://via.placeholder.com/300"}
+              alt={product.heading}
               className="w-full h-48 object-cover rounded-md"
             />
           
             {/* Service Details */}
             <div className="mt-3">
-              <h3 className="text-xl font-bold text-gray-800">{service.title}</h3>
+              <h3 className="text-xl font-bold text-gray-800">{product.heading}</h3>
           
               {/* Price */}
               <p className="text-lg font-semibold text-blue-600 flex items-center mt-1">
-                💰 {service.price ? `₹ ${service.price}/` : "Price Not Available"}{ <span className="text-sm text-zinc-500 mt-2">{service.duration}</span> }
+                💰 {product.price ? `₹ ${product.price}` : "Price Not Available"}
+              </p>
+              <p className="text-base font-meduim text-black flex items-center mt-1">
+                Condition : {product.condition ? `${product.condition}` : "Price Not Available"}
               </p>
           
            
               {/* Location */}
               <p className="text-sm text-gray-500 mt-1 flex items-center">
-                📍 {service.location.area || "Location Not Available"} {service.location.city}
+                📍 {product.location.area || "Location Not Available"} {product.location.city}
               </p>
           
               {/* View Details Button */}
               <button className="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition">
-                <a href={`/service/${service._id}`} className="block text-center">View Details</a>
+                <a href={`/product/${product._id}`} className="block text-center">View Details</a>
               </button>
             </div>
           </div>
@@ -160,10 +160,10 @@ const Newest = ({userLocation, setUserLocation }) => {
           ))}
         </div>
       ) : (
-        !loading && <p className="text-zinc-400">No services found nearby. Please update your location to see relevant services.</p>
+        !loading && <p className="text-zinc-400">No products found nearby. Please update your location to see relevant products.</p>
       )}
     </div>
   );
 };
 
-export default Newest;
+export default NewestProducts;

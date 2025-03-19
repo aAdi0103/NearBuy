@@ -25,10 +25,13 @@ const UserSchema = new mongoose.Schema({
         required: true
     },
     location: { 
+        area:{type:String},
         city: { type: String},
         state: { type: String},
         country: { type: String}
     },
+    latitude: Number,
+    longitude: Number, 
     profilePic: {
         type: String, // URL to the profile picture
         default: "default-profile.png"

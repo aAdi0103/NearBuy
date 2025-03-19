@@ -23,6 +23,7 @@ function ServiceListing() {
   const [description,setDescription]=useState("");
   const [language, setlanguage] = useState([]);
   const [location, setLocation] = useState({
+    area:"",
     city: "",
     state: "",
     country: "",
@@ -232,6 +233,21 @@ function ServiceListing() {
               <h2 className="text-xl font-semibold text-gray-900">Location</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Area
+                </label>
+                <input
+                  type="text"
+                  name="area"
+                  value={location.area}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  placeholder="Enter city"
+                />
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   City

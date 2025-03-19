@@ -1,15 +1,36 @@
 import User from '../Models/UserModel.js'
 import cloudinary from '../Lib/cloudinaryConfig.js'
 
+
+import axios from 'axios'
+const getCoordinates = async (address) => {
+  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json`;
+
+  const response = await axios.get(url);
+  if (response.data.length > 0) {
+    return {
+      lat: parseFloat(response.data[0].lat),
+      lng: parseFloat(response.data[0].lon),
+    };
+  }
+  throw new Error("Coordinates not found");
+};
+
 export const updateProfile = async (req, res) => {
 	try {
-		const allowedFields = ["name", "profilePic", "location","role","About","Phone"];
+		const allowedFields = ["name", "profilePic", "location","role","About","Phone","latitude","longitude"];
 		const updatedData = {};
 		for (const field of allowedFields) {
 			if (req.body[field]) {
 				updatedData[field] = req.body[field];
 			}
 		}
+		const {location} = req.body;
+		const locationString = `${location.area}, ${location.city}, ${location.state}, ${location.country}`;
+
+		const { lat, lng } = await getCoordinates(locationString);
+        updatedData.latitude = lat;
+        updatedData.longitude = lng;
 		// Handle profile picture upload
 		if (req.body.profilePic) {
 			try{

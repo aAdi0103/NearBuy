@@ -1,45 +1,261 @@
-import React from 'react';
-import { Search, MapPin } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import { axiosInstance } from "../lib/axios";
+import L from "leaflet";
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
+import { useNavigate } from "react-router-dom";
 
-const Header = () => {
+const defaultIcon = new L.Icon({
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+});
+
+const Header = ({authUser}) => {
+  const [userLocation, setUserLocation] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [serviceProviders, setServiceProviders] = useState([]);
+  const navigate = useNavigate();
+
+  const [searchType, setSearchType] = useState(""); // "service" or "product"
+  const [location, setLocation] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+
+
+  const {
+    data: services,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["services"],
+    queryFn: async () => {
+      const res = await axiosInstance.get("/services/getAllServices");
+      return res.data;
+    },
+  });
+
+  // Get user's location
+  useEffect(() => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          // If user grants location permission
+          const userLat = position.coords.latitude;
+          const userLng = position.coords.longitude;
+          setUserLocation([userLat, userLng]);
+  
+          // Update service providers dynamically
+          if (services) {
+            setServiceProviders(
+              services.map((service, index) => ({
+                id: service.id || index, // Ensure unique ID
+                name: service.title,
+                location: [service.latitude, service.longitude], // Use API-provided lat/lng
+              }))
+            );
+          }
+        },
+        () => {
+          // If user denies location permission, use authUser's location
+          if (authUser?.latitude && authUser?.longitude) {
+            setUserLocation([authUser.latitude, authUser.longitude]);
+  
+            if (services) {
+              setServiceProviders(
+                services.map((service, index) => ({
+                  id: service.id || index,
+                  name: service.title,
+                  location: [service.latitude, service.longitude],
+                }))
+              );
+            }
+          } else {
+            alert("Location access denied");
+          }
+        }
+      );
+    } else {
+      alert("Geolocation is not supported by your browser.");
+    }
+  }, [services, authUser]); // Run again if services or authUser changes
+   // Re-run when services data updates
+
+   const handleSearch = async (e) => {
+    e.preventDefault();
+
+    if (!searchType) {
+      alert("Please select either Service or Product.");
+      return;
+    }
+
+    try {
+      const apiUrl =
+        searchType === "service"
+          ? "/services/getSearchedServices"
+          : "/posts/getSearchedProducts";
+
+      const { data } = await axiosInstance.get(apiUrl, {
+        params: { location, search: searchQuery },
+      });
+
+      console.log("Fetched Data:", data);
+      navigate("/searchedResults", { state: { data } });
+
+    } catch (error) {
+      console.error("Error fetching data:", error.response?.data || error.message);
+    }
+  };
+
+  
+ 
+  
+
   return (
-    <div 
-      className="relative bg-cover bg-center bg-no-repea py-16 px-4 sm:px-6 lg:px-8"
-      style={{ backgroundImage: "url('https://images.unsplash.com/photo-1521790797524-b2497295b8a0?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')" }}
-    >
-      {/* Overlay to make text more readable */}
-      <div className="absolute inset-0 bg-black bg-opacity-40"></div>
 
-      <div className="relative max-w-3xl mx-auto text-center">
-        <h2 className="text-3xl font-bold text-white sm:text-4xl mb-4">
-          Discover Local Services & Goods
-        </h2>
-        <p className="text-lg mb-8 text-white">
-          Connect with trusted local providers in your neighborhood
-        </p>
-        {/* Search Box */}
-        <div className="bg-white rounded-lg shadow-md p-2 flex flex-col sm:flex-row gap-2 relative">
-          <div className="flex-1 flex items-center border rounded-md px-3 py-2">
-            <Search className="w-5 h-5 text-gray-400 mr-2" />
-            <input
-              type="text"
-              placeholder="What service or Product are you looking for?"
-              className="w-full focus:outline-none"
-            />
-          </div>
-          <div className="flex-1 flex items-center border rounded-md px-3 py-2">
-            <MapPin className="w-5 h-5 text-gray-400 mr-2" />
-            <input
-              type="text"
-              placeholder="Location"
-              className="w-full focus:outline-none"
-            />
-          </div>
-          <button className="w-full sm:w-auto bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors">
-            Search
-          </button>
-        </div>
+    <div className="flex flex-col md:flex-row items-center gap-10 max-md:gap-0 mb-16 justify-between py-2 mt-5 px-3 min-h-[90vh] max-w-6xl mx-auto">
+
+      {/* Left Side - Search Section */}
+      <div className="md:w-1/2 min-h-[50vh] w-full space-y-4">
+      <h1 className="text-6xl font-extrabold max-md:text-4xl">
+        Find Local Services & Goods Near You
+      </h1>
+      <p className="text-gray-600">
+        Connect with trusted local service providers and products in your area.
+      </p>
+
+      {/* Checkboxes for Service or Product */}
+      <div className="flex space-x-4">
+        <label className="flex items-center space-x-2">
+          <input
+            type="radio"
+            name="searchType"
+            value="service"
+            checked={searchType === "service"}
+            onChange={(e) => setSearchType(e.target.value)}
+            className="w-4 h-4"
+          />
+          <span>Service</span>
+        </label>
+        <label className="flex items-center space-x-2">
+          <input
+            type="radio"
+            name="searchType"
+            value="product"
+            checked={searchType === "product"}
+            onChange={(e) => setSearchType(e.target.value)}
+            className="w-4 h-4"
+          />
+          <span>Product</span>
+        </label>
       </div>
+
+      {/* Search Fields */}
+      <form
+        className="flex flex-col space-y-3"
+        onSubmit={handleSearch}
+      >
+        {/* Location Input */}
+        <input
+          type="text"
+          placeholder="Enter your location"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          className="border border-gray-300 px-4 py-2 rounded-md w-full focus:outline-none"
+        />
+
+        {/* Search Query Input (Service or Product) */}
+        <input
+          type="text"
+          placeholder={searchType === "product" ? "Search for a product..." : "Search for a service..."}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          disabled={!searchType} // Disable if no checkbox is selected
+          className="border border-gray-300 px-4 py-2 rounded-md w-full focus:outline-none"
+        />
+
+        {/* Search Button */}
+        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-md font-semibold">
+          Search
+        </button>
+      </form>
+
+      {/* Categories */}
+      <div className="flex space-x-2 mt-2">
+        {["Cleaning", "Repair", "Tutoring", "Fitness"].map((category) => (
+          <button key={category} className="border border-gray-300 px-3 py-1 rounded-md text-sm hover:bg-gray-100">
+            {category}
+          </button>
+        ))}
+      </div>
+    </div>
+
+
+      {/* Right Side - Map Section */}
+<div className="md:w-1/2 w-full mt-6 md:mt-0 flex flex-col items-center">
+  {/* Show Map only if modal is not open */}
+  {!isModalOpen && (
+    <div className="w-full h-[65vh] max-md:h-[30vh] bg-gray-200 rounded-lg flex items-center justify-center">
+      {userLocation ? (
+        <MapContainer center={userLocation} zoom={13} className="w-full h-full rounded-lg">
+          {/* Tile Layer (Map Design) */}
+          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+
+          {/* User's Location */}
+          <Marker position={userLocation} icon={defaultIcon}>
+            <Popup>You are here</Popup>
+          </Marker>
+
+          {/* Service Provider Markers */}
+          {serviceProviders.map((provider) => (
+            <Marker key={provider.id} position={provider.location} icon={defaultIcon}>
+              <Popup>{provider.name}</Popup>
+            </Marker>
+          ))}
+        </MapContainer>
+      ) : (
+        <p className="font-semibold text-red-600">Please allow location or signin ....</p>
+      )}
+    </div>
+  )}
+
+  <button onClick={() => setIsModalOpen(true)} className="mt-4 bg-blue-600 hover:scale-105 transition-transform text-white px-4 font-semibold py-2 rounded-md">
+    View Services near you in map
+  </button>
+</div>
+
+{/* Modal Overlay */}
+{isModalOpen && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+    <div className="bg-white p-6 rounded-md shadow-lg w-11/12 min-h-[80vh] text-center">
+      <h2 className="text-xl font-semibold mb-4">Map View</h2>
+      {userLocation ? (
+        <MapContainer center={userLocation} zoom={13} className="w-full h-[80vh] rounded-lg">
+          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+          <Marker position={userLocation} icon={defaultIcon}>
+            <Popup>You are here</Popup>
+          </Marker>
+          {serviceProviders.map((provider) => (
+            <Marker key={provider.id} position={provider.location} icon={defaultIcon}>
+              <Popup>{provider.name}</Popup>
+            </Marker>
+          ))}
+        </MapContainer>
+      ) : (
+        <p className="text-gray-500">Fetching location...</p>
+      )}
+      <button onClick={() => setIsModalOpen(false)} className="bg-red-500 text-white px-4 py-2 rounded-md mt-4">
+        Close
+      </button>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };

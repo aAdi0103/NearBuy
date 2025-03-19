@@ -16,10 +16,13 @@ const PostSchema = new mongoose.Schema({
 
     },
     location: { 
+        area:{type:String},
         city: { type: String, required: true },
         state: { type: String, required: true },
         country: { type: String, required: true }
     },
+    latitude: Number,
+    longitude: Number, 
     price: {
         type: Number,
         required: true,

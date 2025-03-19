@@ -17,6 +17,7 @@ const ProductListing = () => {
   const [imagePreview, setImagePreview] = useState(null);
 
   const [location, setLocation] = useState({
+    area:"",
     city: "",
     state: "",
     country: "",
@@ -107,7 +108,7 @@ const ProductListing = () => {
         <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
           <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-5">
             <h1 className="text-3xl font-bold text-white">List Your Product</h1>
-            <p className="text-blue-100 mt-2">Fill in the details to create your Listing</p>
+            <p className="text-red-900 mt-2">Please Enter Correct Details to meet Buyer</p>
           </div>
 
           <div className="p-8 space-y-8">
@@ -164,6 +165,19 @@ const ProductListing = () => {
         <h2 className="text-xl font-semibold text-gray-900">Location</h2>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+      <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Area</label>
+          <input
+            type="text"
+            name="area"
+            value={location.area}
+            onChange={handleChange}
+            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+            placeholder="Enter area"
+          />
+        </div>
+
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
           <input
@@ -175,6 +189,7 @@ const ProductListing = () => {
             placeholder="Enter city"
           />
         </div>
+
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">State</label>
           <input
@@ -186,6 +201,7 @@ const ProductListing = () => {
             placeholder="Enter state"
           />
         </div>
+
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Country</label>
           <input
@@ -284,10 +300,7 @@ const ProductListing = () => {
 			)}
             </div>
 
-
-
-
-            {/* Action Buttons */}
+      {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6 border-t">
               <button className="text-gray-600 hover:text-gray-900 transition-colors">Cancel</button>
               <div className="flex flex-col sm:flex-row gap-3">

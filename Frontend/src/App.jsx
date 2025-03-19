@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "./lib/axios";
@@ -19,7 +19,11 @@ import ServicesListings from "./Pages/Listings/ServicesListings";
 import ProductListing from "./Pages/Listings/ProductListing";
 import ServiceDetails from "./Pages/showDetails/ServiceDetails";
 import ProductDetails from './Pages/showDetails/ProductDetails'
+import ViewallServices from "./Pages/ViewallServices";
+import ViewAllProducts from "./Pages/ViewAllProducts";
+import SearchedServices from "./Pages/SearchedServices";
 function App() {
+
   const { data: authUser, isLoading } = useQuery({
     queryKey: ["authUser"],
     queryFn: async () => {
@@ -35,7 +39,28 @@ function App() {
     },
   });
 
-  // console.log(authUser);
+ 
+  const [location, setLocation] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      setError("Geolocation not supported");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
+      },
+      (err) => setError(err.message)
+    );
+  }, []);
+
+
 
   if (isLoading) return null;
 
@@ -43,7 +68,7 @@ function App() {
     <>
       <Toaster position="top-center" reverseOrder={false} />
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<HomePage userLocation={location}  />} />
         <Route
           path="/login"
           element={!authUser ? <LoginPage /> : <Navigate to={"/"} />}
@@ -88,6 +113,9 @@ function App() {
         </Route>
         <Route path="/service/:id" element={authUser ? <ServiceDetails/> : <Navigate to={"/login"} /> } />
         <Route path="/product/:id" element={authUser ? <ProductDetails/> : <Navigate to={"/login"} /> } />
+        <Route path='/viewall/services' element={authUser? <ViewallServices/> : <Navigate to={"/login"}/>} />
+        <Route path='/viewall/Products' element={authUser? <ViewAllProducts/> : <Navigate to={"/login"}/>} />
+        <Route path="/searchedResults" element={authUser?<SearchedServices/>:<Navigate to={'/login'}/> } />
       </Routes>
     </>
   );

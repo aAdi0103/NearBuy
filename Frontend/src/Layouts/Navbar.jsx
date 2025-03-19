@@ -21,13 +21,12 @@ const Navbar = () => {
       }
     },
   });
-
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const userLocation = authUser
-    ? { city: authUser.location.city, state: authUser.location.state, country: authUser.location.country }
-    : { city: <a href="/profile" className="text-blue-500">Set Your Location</a> };
+    ? { area:authUser.location.area, city: authUser.location.city, state: authUser.location.state, country: authUser.location.country }
+    : { city: <a href="/login" className="text-blue-500">Set Your Location</a> };
 
   // Logout function
   const { mutate: logout } = useMutation({
@@ -54,6 +53,7 @@ const Navbar = () => {
 
   return (
     <nav className="bg-white shadow-sm relative">
+
       <div className="max-w-8xl mx-auto px-2 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           {/* Logo */}
@@ -67,18 +67,23 @@ const Navbar = () => {
 </div>
          </a>
 
-</div>
+          </div>
 
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-4">
-            <div className="flex items-center text-gray-600 mr-3">
-              <MapPin className="w-4 h-4 mr-1" />
-              <span className="text-blue-600">
-                <a href="/profile">{userLocation.city} {userLocation.state || ""}{" "}
-                {userLocation.country || ""}</a>
-              </span>
-            </div>
+          <div className="flex items-center text-gray-600 mr-3">
+  <MapPin className="w-4 h-4 mr-1" />
+  <span className="text-blue-600 font-mono">
+  <a href={authUser ? `/profile/${authUser.email}` : "/login"}>
+  {authUser
+    ? `${userLocation?.area || ""} ${userLocation?.city || ""} ${userLocation?.state || ""} ${userLocation?.country || ""}`.trim()
+    : "Set your location"}
+</a>
+
+  </span>
+</div>
+
             <button className="bg-yellow-600 font-mono text-white px-4 py-2 rounded-md hover:bg-blue-700">
               <a href="/list">List Services/Items</a>
             </button>
@@ -96,7 +101,7 @@ const Navbar = () => {
 
                 {/* Dropdown Menu */}
                 {isDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-50 overflow-hidden transition-all duration-300">
+                  <div className="absolute right-20 top-5 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-50 overflow-hidden transition-all duration-300">
                   <Link
                     to={`/profile/${authUser.email}`}
                     className="flex font-semibold items-center px-4 py-3 text-gray-800 hover:bg-gray-100 transition duration-200"
