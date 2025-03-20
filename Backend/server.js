@@ -17,7 +17,7 @@ import authRoutes from "./Routes/authRouter.js";
 import userRoutes from "./Routes/userRouter.js"
 import postRoutes from "./Routes/postRouter.js"
 import serviceRoutes from "./Routes/serviceRouter.js"
-
+import notificationRoutes from './Routes/notificationRouter.js'
 const app = express();
 app.use(cors({
   origin: "http://localhost:5173",
@@ -33,6 +33,8 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/posts", postRoutes);
 app.use("/api/v1/services",serviceRoutes);
+app.use("/api/v1/notifications", notificationRoutes);
+
 
 
 app.get("/", (req, res) => {

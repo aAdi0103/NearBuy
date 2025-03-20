@@ -62,7 +62,6 @@ export const updateProfile = async (req, res) => {
 export const getPublicProfile = async (req, res) => {
 	try { 
           const {id} = req.params;
-		  console.log("wdcf",id)
 		const user = await User.findOne({ _id: id }).select("-password");
 
 		if (!user) {

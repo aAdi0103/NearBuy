@@ -1,33 +1,31 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React from 'react'
+import { Link } from 'react-router-dom'
 
 function Listing() {
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-lg text-center">
-        <h1 className="text-2xl font-semibold mb-6 text-gray-800">
-          What do you want to list?
-        </h1>
+    <div className="flex min-h-screen items-center justify-center bg-gray-100">
+      <div className="rounded-lg bg-white p-8 text-center shadow-lg">
+        <h1 className="mb-6 text-2xl font-semibold text-gray-800">What do you want to list?</h1>
         <div className="flex flex-col gap-4">
           {/* Services Button */}
           <Link
-  to="/list/Services"
-  className="bg-green-600 text-white py-3 px-6 rounded-lg font-medium text-lg shadow-md hover:bg-green-700 transition flex items-center justify-center"
->
-  List Services
-</Link>
+            to="/list/Services"
+            className="flex items-center justify-center rounded-lg bg-green-600 px-6 py-3 text-lg font-medium text-white shadow-md transition hover:bg-green-700"
+          >
+            List Services
+          </Link>
 
           {/* Products Button */}
           <Link
-  to="/list/Products"
-  className="bg-green-600 text-white py-3 px-6 rounded-lg font-medium text-lg shadow-md hover:bg-green-700 transition flex items-center justify-center"
->
-  List Products
-</Link>
+            to="/list/Products"
+            className="flex items-center justify-center rounded-lg bg-green-600 px-6 py-3 text-lg font-medium text-white shadow-md transition hover:bg-green-700"
+          >
+            List Products
+          </Link>
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default Listing;
+export default Listing

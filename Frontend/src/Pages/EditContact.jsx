@@ -1,30 +1,30 @@
-import { useState } from "react";
+import { useState } from 'react'
 
-const EditContact = ({  userData, isOwnProfile, onSave}) => {
-  const [phoneNumber, setPhoneNumber] = useState(userData?.Phone || "");
+const EditContact = ({ userData, isOwnProfile, onSave }) => {
+  const [phoneNumber, setPhoneNumber] = useState(userData?.Phone || '')
 
   const handleSave = () => {
-    onSave({Phone:phoneNumber});
-  };
+    onSave({ Phone: phoneNumber })
+  }
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-xl font-semibold mb-4">Edit Contact</h2>
+    <div className="rounded-lg bg-white p-6 shadow-md">
+      <h2 className="mb-4 text-xl font-semibold">Edit Contact</h2>
       <input
         type="tel"
         value={phoneNumber}
         onChange={(e) => setPhoneNumber(e.target.value)}
         placeholder="Enter your phone number"
-        className="w-full p-2 border rounded-lg"
+        className="w-full rounded-lg border p-2"
       />
       <button
         onClick={handleSave}
-        className="mt-4 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition"
+        className="mt-4 rounded-lg bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
       >
         Save
       </button>
     </div>
-  );
-};
+  )
+}
 
-export default EditContact;
+export default EditContact
