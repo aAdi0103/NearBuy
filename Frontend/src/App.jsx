@@ -25,6 +25,7 @@ import ViewAllProducts from './Pages/ViewAllProducts'
 import SearchedServices from './Pages/SearchedServices'
 import Booking from './Pages/Listings/Booking'
 import Notification from './Pages/Notfication';
+import UserBookings from './Pages/Listings/UserBookings';
 function App() {
   const { data: authUser, isLoading } = useQuery({
     queryKey: ['authUser'],
@@ -122,6 +123,7 @@ function App() {
         />
         <Route path="/Booking/:id/:ids" element={authUser ? <Booking /> : <Navigate to={'/login'} />} />
         <Route path="/notifications" element={authUser ? <Notification /> : <Navigate to={'/login'} />} />
+        <Route path="/userBookings/:id" element={authUser ? <UserBookings /> : <Navigate to={'/login'} />} />
       </Routes>
     </>
   )

@@ -4,27 +4,33 @@ import jwt from "jsonwebtoken"
 
 import axios from 'axios'
 const getCoordinates = async (address) => {
-  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json`;
-
-  const response = await axios.get(url);
-  if (response.data.length > 0) {
-    return {
-      lat: parseFloat(response.data[0].lat),
-      lng: parseFloat(response.data[0].lon),
-    };
-  }
-  throw new Error("Coordinates not found");
-};
+	try {
+	  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json`;
+  
+	  const response = await axios.get(url);
+  
+	  if (response.data.length > 0) {
+		return {
+		  lat: parseFloat(response.data[0].lat),
+		  lng: parseFloat(response.data[0].lon),
+		};
+	  } else {
+		throw new Error("Invalid location. Please enter a correct location with the correct spelling.");
+	  }
+	} catch (error) {
+	  throw new Error("Invalid location. Please enter a correct location with the correct spelling.");
+	}
+  };
+  
 
 export const signup = async (req, res) => {
 	try {
 		const { name, email, password, location } = req.body;
 
 		// Validate required fields
-		if (!name || !email || !password || !location || !location.area||!location.city || !location.state || !location.country) {
-			return res.status(400).json({ message: "All fields including location (city, state, country) are required" });
+		if (!name || !email || !password || !location || !location.area || !location.city || !location.state || !location.country) {
+			return res.status(400).json({ message: "All fields including location (area, city, state, country) are required" });
 		}
-
 
 		const existingUser = await User.findOne({ email });
 		if (existingUser) {
@@ -34,7 +40,15 @@ export const signup = async (req, res) => {
 		const locationString = `${location.area}, ${location.city}, ${location.state}, ${location.country}`;
 
 		// Get latitude and longitude from the formatted location string
-		const { lat, lng } = await getCoordinates(locationString);
+		let lat, lng;
+		try {
+			const coordinates = await getCoordinates(locationString);
+			lat = coordinates.lat;
+			lng = coordinates.lng;
+		} catch (error) {
+			return res.status(400).json({ message: error.message }); // Send error response to the frontend
+		}
+
 		// Hash password
 		const salt = await bcrypt.genSalt(10);
 		const hashedPassword = await bcrypt.hash(password, salt);
@@ -45,13 +59,13 @@ export const signup = async (req, res) => {
 			email,
 			password: hashedPassword,
 			location: {
-				area:location.area,
+				area: location.area,
 				city: location.city,
 				state: location.state,
-				country: location.country
+				country: location.country,
 			},
-			latitude:lat,
-			longitude:lng
+			latitude: lat,
+			longitude: lng,
 		});
 		await user.save();
 
@@ -73,6 +87,7 @@ export const signup = async (req, res) => {
 		res.status(500).json({ message: "Internal server error" });
 	}
 };
+
 
 export const login = async function(req,res){
     try {

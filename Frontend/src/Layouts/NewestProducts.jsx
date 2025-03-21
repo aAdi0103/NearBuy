@@ -118,45 +118,45 @@ const NewestProducts = ({ userLocation, setUserLocation }) => {
         </div>
       ) : products.length > 0 ? (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {products.map((product) => (
-            <div
-              key={product._id}
-              className="rounded-lg bg-white p-4 shadow-lg transition-transform duration-300 hover:scale-105"
-            >
-              {/* Image Section */}
-              <img
-                src={product.images || 'https://via.placeholder.com/300'}
-                alt={product.heading}
-                className="h-48 w-full rounded-md object-cover"
-              />
+  {products.map((product) => (
+    <a
+      key={product._id}
+      href={`/product/${product._id}`}
+      className="block rounded-lg bg-white p-4 shadow-lg transition-transform duration-300 hover:scale-105"
+    >
+      {/* Image Section */}
+      <img
+        src={product.images || 'https://via.placeholder.com/300'}
+        alt={product.heading}
+        className="h-48 w-full rounded-md object-cover"
+      />
 
-              {/* Service Details */}
-              <div className="mt-3">
-                <h3 className="text-xl font-bold text-gray-800">{product.heading}</h3>
+      {/* Service Details */}
+      <div className="mt-3">
+        <h3 className="text-xl font-bold text-gray-800">{product.heading}</h3>
 
-                {/* Price */}
-                <p className="mt-1 flex items-center text-lg font-semibold text-blue-600">
-                  💰 {product.price ? `₹ ${product.price}` : 'Price Not Available'}
-                </p>
-                <p className="font-meduim mt-1 flex items-center text-base text-black">
-                  Condition : {product.condition ? `${product.condition}` : 'Price Not Available'}
-                </p>
+        {/* Price */}
+        <p className="mt-1 flex items-center text-lg font-semibold text-blue-600">
+          💰 {product.price ? `₹ ${product.price}` : 'Price Not Available'}
+        </p>
+        <p className="font-medium mt-1 flex items-center text-base text-black">
+          Condition: {product.condition || 'Condition Not Available'}
+        </p>
 
-                {/* Location */}
-                <p className="mt-1 flex items-center text-sm text-gray-500">
-                  📍 {product.location.area || 'Location Not Available'} {product.location.city}
-                </p>
+        {/* Location */}
+        <p className="mt-1 flex items-center text-sm text-gray-500">
+          📍 {product.location.area || 'Location Not Available'}, {product.location.city}
+        </p>
 
-                {/* View Details Button */}
-                <button className="mt-4 w-full rounded-lg bg-blue-600 py-2 font-semibold text-white transition hover:bg-blue-700">
-                  <a href={`/product/${product._id}`} className="block text-center">
-                    View Details
-                  </a>
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+        {/* View Details Button */}
+        <button className="mt-4 w-full rounded-lg bg-blue-600 py-2 font-semibold text-white transition hover:bg-blue-700">
+          View Details
+        </button>
+      </div>
+    </a>
+  ))}
+</div>
+
       ) : (
         !loading && (
           <p className="text-zinc-400">

@@ -223,18 +223,31 @@ const ProfilePage = () => {
         <div className="flex flex-col items-center justify-center gap-5">
           <h1 className="font-semibold text-zinc-600">What you are looking for?</h1>
           <div className="mt-[-10px] flex gap-9">
-            <button
-              onClick={() => scrollToSection(productsRef)}
-              className="rounded-lg bg-gradient-to-r from-yellow-400 to-yellow-500 px-4 py-2 text-white shadow-md transition-transform duration-200 hover:scale-105 hover:shadow-lg"
-            >
-              Products
-            </button>
-            <button
-              onClick={() => scrollToSection(servicesRef)}
-              className="rounded-lg bg-gradient-to-r from-yellow-400 to-yellow-500 px-4 py-2 text-white shadow-md transition-transform duration-200 hover:scale-105 hover:shadow-lg"
-            >
-              Services
-            </button>
+             {/* Products Button */}
+  <button
+    onClick={() => scrollToSection(productsRef)}
+    className="rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-3 text-white font-semibold shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
+  >
+    📦 Products
+  </button>
+
+  {/* Services Button */}
+  <button
+    onClick={() => scrollToSection(servicesRef)}
+    className="rounded-lg bg-gradient-to-r from-green-500 to-teal-600 px-6 py-3 text-white font-semibold shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
+  >
+    🛠️ Services
+  </button>
+
+  {/* Your Bookings Button (Only visible if authorized) */}
+  {authUser.email === email && (
+    <button className="rounded-lg bg-gradient-to-r from-yellow-500 to-orange-600 px-6 py-3 text-white font-semibold shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl">
+      <a href={`/userBookings/${authUser._id}`} className="block w-full text-center">
+        📅 Your Bookings
+      </a>
+    </button>
+  )}
+
           </div>
         </div>
 

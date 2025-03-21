@@ -8,6 +8,7 @@ import BookingButton from '../Listings/BookingButton';
 const ServiceDetails = () => {
 
   const { id } = useParams();
+
   const { data: authUser } = useQuery({
     queryKey: ['authUser'],
     queryFn: async () => {
@@ -23,6 +24,7 @@ const ServiceDetails = () => {
     },
   });
 
+
   const {
     data: service,
     error,
@@ -36,6 +38,7 @@ const ServiceDetails = () => {
     enabled: !!id,
     onError: (err) => console.error('Error fetching Service details:', err),
   });
+
 
   const sellerId = service?.provider;
 
@@ -52,14 +55,6 @@ const ServiceDetails = () => {
     },
     enabled: !!sellerId,
   });
-  const handleBooking = (event) => {
-    event.preventDefault(); // Prevents the default link action
-
-    const isConfirmed = window.confirm("Are you sure you want to book this service?");
-    if (isConfirmed) {
-      window.location.href = `/Booking/${authUser._id}`; // Redirects after confirmation
-    }
-  };
 
   if (isLoading)
     return (
@@ -67,6 +62,7 @@ const ServiceDetails = () => {
     );
   if (error)
     return <p className="text-center text-red-500">Error loading product</p>;
+
 
   return (
     <>

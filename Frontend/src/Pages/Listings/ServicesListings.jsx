@@ -29,21 +29,26 @@ function ServiceListing() {
 
   const queryClient = useQueryClient()
 
-  const { mutate: createPostMutation, isPending } = useMutation({
+  const { mutate: createServiceMutation, isPending } = useMutation({
     mutationFn: async (serviceData) => {
-      const res = await axiosInstance.post('/services/create', serviceData, {
-        headers: { 'Content-Type': 'application/json' },
-      })
-      return res.data
+      try {
+        const res = await axiosInstance.post('/services/create', serviceData, {
+          headers: { 'Content-Type': 'application/json' },
+        });
+        return res.data;
+      } catch (error) {
+        throw error.response?.data?.message || "Failed to create service";
+      }
     },
     onSuccess: () => {
-      toast.success('Service created successfully')
-      queryClient.invalidateQueries({ queryKey: ['services'] })
+      toast.success('Service created successfully');
+      queryClient.invalidateQueries({ queryKey: ['services'] });
     },
     onError: (err) => {
-      toast.error(err.response.data.message || 'Failed to create post')
+      toast.error(err || 'Something went wrong. Please check your location spelling.');
     },
-  })
+  });
+  
 
   const handleChange = (e) => {
     setLocation({ ...location, [e.target.name]: e.target.value })
@@ -63,7 +68,7 @@ function ServiceListing() {
       }
 
       if (images) serviceData.images = await readFileAsDataURL(images)
-      createPostMutation(serviceData)
+      createServiceMutation(serviceData)
     } catch (error) {
       console.error('Error creating service:', error)
     }

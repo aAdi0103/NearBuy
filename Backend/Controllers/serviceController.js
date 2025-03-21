@@ -26,14 +26,21 @@ export const createService = async (req, res) => {
     const { title, description, images, location, experience, price, duration, language, category } = req.body;
     const provider = req.user._id;
 
+    if (!title || !description || !location || !experience || !price || !duration || !language || !category) {
+      return res.status(400).json({ message: "All required fields must be provided." });
+    }
+
     // Format location object into a single string for geocoding
     const locationString = `${location.area}, ${location.city}, ${location.state}, ${location.country}`;
 
-    // Get latitude and longitude from the formatted location string
-    const { lat, lng } = await getCoordinates(locationString);
+    let lat, lng;
+    try {
+      ({ lat, lng } = await getCoordinates(locationString));
+    } catch (error) {
+      return res.status(400).json({ message: "Invalid location. Please enter a correct location with proper spelling." });
+    }
 
     let uploadedImage = "";
-
     if (images) {
       try {
         const result = await cloudinary.uploader.upload(images);
@@ -293,24 +300,65 @@ export const getSearchedServices = async (req, res) => {
   try {
     const { location, search } = req.query;
     const serviceString = String(search);
+   console.log(search)
+    // Get coordinates for the given location
     const coordinates = await getCoordinates(location);
     if (!coordinates) {
       return res.status(400).json({ message: "Invalid location, please select another." });
     }
 
-    const query = {
-      latitude: { $gte: coordinates.lat - 0.1, $lte: coordinates.lat + 0.1 },
-      longitude: { $gte: coordinates.lng - 0.1, $lte: coordinates.lng + 0.1 },
+    const { lat, lng } = coordinates;
+    
+    // Radius of Earth in km
+    const earthRadius = 6371;
+    const maxDistance = 25; // 25km radius
+
+    // Convert latitude and longitude from degrees to radians
+    const latRadians = (Math.PI / 180) * lat;
+    const lngRadians = (Math.PI / 180) * lng;
+
+    // Query to find services within a 25km radius using Haversine formula
+    const services = await Service.find({
       $or: [
         { title: { $regex: serviceString, $options: "i" } },
         { category: { $regex: serviceString, $options: "i" } },
       ],
-    };
-    const services = await Service.find(query);
+      $expr: {
+        $lte: [
+          {
+            $multiply: [
+              earthRadius,
+              {
+                $acos: {
+                  $add: [
+                    { 
+                      $multiply: [
+                        { $sin: latRadians },
+                        { $sin: { $multiply: ["$latitude", Math.PI / 180] } }
+                      ]
+                    },
+                    { 
+                      $multiply: [
+                        { $cos: latRadians },
+                        { $cos: { $multiply: ["$latitude", Math.PI / 180] } },
+                        { $cos: { $subtract: [{ $multiply: ["$longitude", Math.PI / 180] }, lngRadians] } }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          maxDistance
+        ]
+      }
+    });
+
     res.json(services);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error fetching services" });
   }
 };
+
 

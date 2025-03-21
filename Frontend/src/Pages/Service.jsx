@@ -137,7 +137,7 @@ const Service = () => {
                         <span className="text-xs text-black">{service.duration}</span>{' '}
                       </span>
                       <button className="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-bold text-white transition hover:bg-blue-700">
-                        Book Now
+                        View Details
                       </button>
                     </div>
                   </div>

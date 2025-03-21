@@ -122,43 +122,43 @@ const Newest = ({ userLocation, setUserLocation }) => {
         </div>
       ) : services.length > 0 ? (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {services.map((service) => (
-            <div
-              key={service._id}
-              className="rounded-lg bg-white p-4 shadow-lg transition-transform duration-300 hover:scale-105"
-            >
-              {/* Image Section */}
-              <img
-                src={service.images || 'https://via.placeholder.com/300'}
-                alt={service.title}
-                className="h-48 w-full rounded-md object-cover"
-              />
+  {services.map((service) => (
+    <a
+      key={service._id}
+      href={`/service/${service._id}`}
+      className="block rounded-lg bg-white p-4 shadow-lg transition-transform duration-300 hover:scale-105"
+    >
+      {/* Image Section */}
+      <img
+        src={service.images || 'https://via.placeholder.com/300'}
+        alt={service.title}
+        className="h-48 w-full rounded-md object-cover"
+      />
 
-              {/* Service Details */}
-              <div className="mt-3">
-                <h3 className="text-xl font-bold text-gray-800">{service.title}</h3>
+      {/* Service Details */}
+      <div className="mt-3">
+        <h3 className="text-xl font-bold text-gray-800">{service.title}</h3>
 
-                {/* Price */}
-                <p className="mt-1 flex items-center text-lg font-semibold text-blue-600">
-                  💰 {service.price ? `₹ ${service.price}/` : 'Price Not Available'}
-                  {<span className="mt-2 text-sm text-zinc-500">{service.duration}</span>}
-                </p>
+        {/* Price */}
+        <p className="mt-1 flex items-center text-lg font-semibold text-blue-600">
+          💰 {service.price ? `₹ ${service.price}/` : 'Price Not Available'}
+          <span className="mt-2 text-sm text-zinc-500">{service.duration}</span>
+        </p>
 
-                {/* Location */}
-                <p className="mt-1 flex items-center text-sm text-gray-500">
-                  📍 {service.location.area || 'Location Not Available'} {service.location.city}
-                </p>
+        {/* Location */}
+        <p className="mt-1 flex items-center text-sm text-gray-500">
+          📍 {service.location.area || 'Location Not Available'}, {service.location.city}
+        </p>
 
-                {/* View Details Button */}
-                <button className="mt-4 w-full rounded-lg bg-blue-600 py-2 font-semibold text-white transition hover:bg-blue-700">
-                  <a href={`/service/${service._id}`} className="block text-center">
-                    View Details
-                  </a>
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+        {/* View Details Button */}
+        <button className="mt-4 w-full rounded-lg bg-blue-600 py-2 font-semibold text-white transition hover:bg-blue-700">
+          View Details
+        </button>
+      </div>
+    </a>
+  ))}
+</div>
+
       ) : (
         !loading && (
           <p className="text-zinc-400">

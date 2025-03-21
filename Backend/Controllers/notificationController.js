@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 
 export const createNotification = async (req, res) => {
     try {
-      const { receiver, sender, message, relatedPost } = req.body;
+      const { sender,receiver, message, relatedPost } = req.body;
 
       if (!mongoose.Types.ObjectId.isValid(receiver) || !mongoose.Types.ObjectId.isValid(sender)) {
         return res.status(400).json({ error: "Invalid receiver or sender ID" });
@@ -31,7 +31,7 @@ export const createNotification = async (req, res) => {
         const { userId, postId } = req.params;
         // Find the latest notification related to the booking request
         const booking = await Notification.findOne({
-          receiver: userId, // The authenticated user
+          sender: userId, // The authenticated user
           relatedPost: postId,
         }).sort({ createdAt: -1 }); // Sort by latest request
     
@@ -56,6 +56,7 @@ export const createNotification = async (req, res) => {
         return res.status(200).json({ message: "No notifications found", notifications: [] });
       }
       return res.status(200).json({ notifications });
+
     } catch (error) {
       console.error("Error fetching user notifications:", error);
       res.status(500).json({ message: "Internal server error" });
@@ -105,5 +106,19 @@ export const markNotificationAsRejected = async (req, res) => {
 		res.status(500).json({ message: "Internal server error" });
 	}
 };
+
+
+export const getUserBookings = async (req, res) => {
+  try {
+    const senderId = req.params.id;
+    const bookings = await Notification.find({ sender: senderId }).populate("relatedPost");
+
+    res.status(200).json(bookings); // Always return 200, even if no bookings are found
+  } catch (error) {
+    console.error("Error fetching bookings:", error);
+    res.status(500).json({ message: "Error fetching bookings. Please try again later." });
+  }
+};
+
 
 

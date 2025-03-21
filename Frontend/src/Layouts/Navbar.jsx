@@ -66,10 +66,8 @@ const Navbar = () => {
           <div className="flex items-center">
             <Link to="/">
               <div className="flex items-center">
-                <img className="w-[6vw] max-md:w-[12vw]" src={logo} alt="" />
-                <h1 className="ml-[-10px] text-[2.2vw] max-md:text-[4.5vw] font-bold text-blue-600">
-                  NearBuy
-                </h1>
+              <img className="mx-auto w-[10vw] max-md:w-[28vw]" src="/src/assets/NearBuy.svg" alt="NearBuy" />
+                
               </div>
             </Link>
           </div>

@@ -5,7 +5,7 @@ const SignPage = () => {
   return (
     <div className="mt-[-8vh] flex min-h-screen flex-col justify-center sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <img className="mx-auto h-32 w-auto" src="/logo.svg" alt="LinkedIn" />
+      <img className="mx-auto w-[20vw] mt-20" src="/src/assets/NearBuy.svg" alt="NearBuy" />
       </div>
       <div className="mt-8 shadow-md sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white px-4 py-8 shadow sm:rounded-lg sm:px-10">
@@ -17,7 +17,7 @@ const SignPage = () => {
                 <div className="w-full border-t border-gray-300"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="bg-white px-2 text-gray-500">Already on LinkedIn?</span>
+                <span className="bg-white px-2 text-gray-500">Already on NearBuy?</span>
               </div>
             </div>
             <div className="mt-2">

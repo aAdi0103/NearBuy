@@ -24,12 +24,15 @@ const BookingButton = ({ seller, authUser }) => {
 
     fetchBookingStatus();
   }, [authUser._id, id]);
+  console.log(bookingStatus)
+
+
 
   const handleConfirmBooking = async () => {
     try {
       const response = await axiosInstance.post("/notifications/createNotification", {
-        receiver: authUser._id,
-        sender: seller._id,
+        sender: authUser._id,
+        receiver: seller._id,
         relatedPost: id,
         message,
       });

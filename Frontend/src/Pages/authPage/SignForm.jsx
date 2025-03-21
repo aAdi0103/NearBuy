@@ -28,9 +28,10 @@ const SignUpForm = () => {
     },
     onError: (err) => {
       console.log('We have an error')
-      toast.error(err.response.data.message || 'Something went wrong')
+      toast.error(err.response?.data?.message || 'Something went wrong')
     },
-  })
+  });
+
 
   const handleSignUp = (e) => {
     e.preventDefault()
@@ -65,7 +66,7 @@ const SignUpForm = () => {
         placeholder="Area"
         value={location.area}
         onChange={handleLocationChange}
-        className="input input-bordered w-full"
+        className="input input-bordered w-full p-3 rounded-md border border-gray-200"
         required
       />
 
@@ -75,7 +76,7 @@ const SignUpForm = () => {
         placeholder="City"
         value={location.city}
         onChange={handleLocationChange}
-        className="input input-bordered w-full"
+        className="input input-bordered w-full p-3 rounded-md border border-gray-200"
         required
       />
 
@@ -85,7 +86,7 @@ const SignUpForm = () => {
         placeholder="State"
         value={location.state}
         onChange={handleLocationChange}
-        className="input input-bordered w-full"
+        className="input input-bordered w-full p-3 rounded-md border border-gray-200"
         required
       />
 
@@ -95,7 +96,7 @@ const SignUpForm = () => {
         placeholder="Country"
         value={location.country}
         onChange={handleLocationChange}
-        className="input input-bordered w-full"
+        className="input input-bordered w-full p-3 rounded-md border border-gray-200"
         required
       />
 

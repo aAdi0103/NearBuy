@@ -4,72 +4,75 @@ import cloudinary from '../Lib/cloudinaryConfig.js'
 
 import axios from "axios";
 const getCoordinates = async (address) => {
-  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json`;
+  try {
+    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json`;
+    const response = await axios.get(url);
 
-  const response = await axios.get(url);
-  if (response.data.length > 0) {
-    return {
-      lat: parseFloat(response.data[0].lat),
-      lng: parseFloat(response.data[0].lon),
-    };
+    if (response.data.length > 0) {
+      return {
+        lat: parseFloat(response.data[0].lat),
+        lng: parseFloat(response.data[0].lon),
+      };
+    } else {
+      throw new Error("Invalid location. Please enter a correct location with proper spelling.");
+    }
+  } catch (error) {
+    throw new Error("Failed to fetch coordinates. Please check your location spelling.");
   }
-  throw new Error("Coordinates not found");
 };
+
+
+
 
 export const createPosts = async (req, res) => {
   try {
-    // Destructure required fields
     const { heading, description, images, location, price, category, quantity, condition } = req.body;
     const author = req.user._id;
-    // Check if all required fields are provided
+
     if (!heading || !description || !location || !price || !category || !quantity || !condition) {
       return res.status(400).json({ message: "All required fields must be provided." });
     }
 
-      // Format location object into a single string for geocoding
-      const locationString = `${location.area}, ${location.city}, ${location.state}, ${location.country}`;
+    const locationString = `${location.area}, ${location.city}, ${location.state}, ${location.country}`;
 
-      // Get latitude and longitude from the formatted location string
-      const { lat, lng } = await getCoordinates(locationString);
-  
-    // Upload single image to Cloudinary
+    let lat, lng;
+    try {
+      ({ lat, lng } = await getCoordinates(locationString));
+    } catch (error) {
+      return res.status(400).json({ message: error.message });
+    }
+
     let uploadedImage = "";
-
-    if (images){
+    if (images) {
       try {
-        const result = await  cloudinary.uploader.upload(req.body.images);
+        const result = await cloudinary.uploader.upload(images);
         uploadedImage = result.secure_url;
       } catch (uploadError) {
-        console.error("Error uploading image to Cloudinary:", uploadError);
         return res.status(500).json({ message: "Image upload failed", error: uploadError.message });
       }
     }
 
-    // Create new post
     const newPost = new Post({
       heading,
       description,
-      images: uploadedImage, // Store single image URL
+      images: uploadedImage,
       location,
       quantity,
       condition,
       price,
       category,
       author,
-      latitude:lat,
-      longitude:lng
+      latitude: lat,
+      longitude: lng
     });
 
-    // Save post to database
     await newPost.save();
-
-    // Success response
     res.status(201).json({ message: "Post created successfully", post: newPost });
   } catch (error) {
-    console.error("Error in createPost controller:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
 
 // Controller to get posts by an array of id
 export const getPostsByIds = async (req, res) => {

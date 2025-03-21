@@ -179,7 +179,7 @@ const Header = ({ authUser }) => {
 
         {/* Categories */}
         <div className="mt-2 flex space-x-2">
-          {['Laundary', 'Cleaning', 'Tutoring', 'Fitness'].map((category) => (
+          {['Cleaning', 'Repair', 'Tutoring', 'Fitness'].map((category) => (
             <button
               key={category}
               className="rounded-md border border-gray-300 px-3 py-1 text-sm hover:bg-gray-100"

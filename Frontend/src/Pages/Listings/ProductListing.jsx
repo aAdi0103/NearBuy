@@ -50,20 +50,24 @@ const ProductListing = () => {
 
   const { mutate: createPostMutation, isPending } = useMutation({
     mutationFn: async (postData) => {
-      const res = await axiosInstance.post('/posts/create', postData, {
-        headers: { 'Content-Type': 'application/json' },
-      })
-      return res.data
+      try {
+        const res = await axiosInstance.post('/posts/create', postData, {
+          headers: { 'Content-Type': 'application/json' },
+        });
+        return res.data;
+      } catch (error) {
+        throw error.response?.data?.message || "Failed to create post";
+      }
     },
     onSuccess: () => {
-      // resetForm();
-      toast.success('Post created successfully')
-      queryClient.invalidateQueries({ queryKey: ['posts'] })
+      toast.success('Post created successfully');
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
     },
     onError: (err) => {
-      toast.error(err.response.data.message || 'Failed to create post')
+      toast.error(err || 'Something went wrong. Please check your location spelling.');
     },
-  })
+  });
+  
 
   const handlePostCreation = async () => {
     try {
