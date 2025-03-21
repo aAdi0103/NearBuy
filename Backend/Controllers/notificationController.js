@@ -1,4 +1,4 @@
-import Notification from "../Models/notificationModel.js";
+import Notification from "../Models/NotificationModel.js";
 import mongoose from "mongoose";
 
 
