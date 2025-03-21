@@ -1,34 +1,34 @@
-import React, { useState } from 'react'
-import { MapPin, Camera } from 'lucide-react'
+import React, { useState } from 'react';
+import { MapPin, Camera } from 'lucide-react';
 
 function ProfileHeader({ userData, onSave }) {
-  const [editedData, setEditedData] = useState(userData)
+  const [editedData, setEditedData] = useState(userData);
 
   const handleImageChange = (event) => {
-    const file = event.target.files[0]
+    const file = event.target.files[0];
     if (file) {
-      const reader = new FileReader()
+      const reader = new FileReader();
       reader.onloadend = () => {
         setEditedData((prev) => ({
           ...prev,
           profilePic: reader.result,
-        }))
-      }
-      reader.readAsDataURL(file)
+        }));
+      };
+      reader.readAsDataURL(file);
     }
-  }
+  };
 
   return (
-    <div className="mx-auto flex max-w-3xl flex-row items-start gap-x-8 rounded-xl bg-gradient-to-br from-white to-gray-50 p-8 shadow-2xl">
+    <div className="mx-auto flex max-w-3xl flex-col md:flex-row items-center md:items-start gap-6 rounded-xl bg-gradient-to-br from-white to-gray-50 p-6 shadow-2xl w-full">
       {/* Profile Picture Upload */}
       <div className="relative flex-shrink-0">
-        <div className="relative h-32 w-32">
+        <div className="relative h-28 w-28 md:h-32 md:w-32">
           <img
-            className="h-32 w-32 rounded-full object-cover shadow-xl ring-4 ring-white"
+            className="h-full w-full rounded-full object-cover shadow-xl ring-4 ring-white"
             src={editedData.profilePic || ''}
             alt={editedData.name}
           />
-          <label className="absolute bottom-0 right-0 translate-x-2 translate-y-2 transform cursor-pointer rounded-full bg-white p-2.5 shadow-lg transition-all duration-300 hover:bg-gray-50 group-hover:scale-110">
+          <label className="absolute bottom-0 right-0 translate-x-2 translate-y-2 transform cursor-pointer rounded-full bg-white p-2.5 shadow-lg transition-all duration-300 hover:bg-gray-50">
             <Camera size={20} className="text-gray-600" />
             <input type="file" className="hidden" onChange={handleImageChange} accept="image/*" />
           </label>
@@ -36,28 +36,24 @@ function ProfileHeader({ userData, onSave }) {
       </div>
 
       {/* Profile Details Section */}
-      <div className="flex-grow space-y-6">
+      <div className="flex-grow w-full space-y-4">
         {/* Name Input */}
-        <div className="relative">
-          <input
-            type="text"
-            value={editedData.name}
-            onChange={(e) => setEditedData({ ...editedData, name: e.target.value })}
-            className="focus:border-primary focus:ring-primary/20 w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-lg font-semibold outline-none transition-all duration-300 focus:ring-2"
-            placeholder="Your Name"
-          />
-        </div>
+        <input
+          type="text"
+          value={editedData.name}
+          onChange={(e) => setEditedData({ ...editedData, name: e.target.value })}
+          className="focus:border-primary focus:ring-primary/20 w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-lg font-semibold outline-none transition-all duration-300 focus:ring-2"
+          placeholder="Your Name"
+        />
 
         {/* Role Input */}
-        <div className="relative">
-          <input
-            type="text"
-            value={editedData.role ?? 'User'}
-            onChange={(e) => setEditedData({ ...editedData, role: e.target.value })}
-            className="focus:border-primary focus:ring-primary/20 w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-gray-600 outline-none transition-all duration-300 focus:ring-2"
-            placeholder="Your Role"
-          />
-        </div>
+        <input
+          type="text"
+          value={editedData.role ?? 'User'}
+          onChange={(e) => setEditedData({ ...editedData, role: e.target.value })}
+          className="focus:border-primary focus:ring-primary/20 w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-gray-600 outline-none transition-all duration-300 focus:ring-2"
+          placeholder="Your Role"
+        />
 
         {/* Location Inputs */}
         <div className="space-y-4">
@@ -66,7 +62,7 @@ function ProfileHeader({ userData, onSave }) {
             <span className="text-sm font-medium">Location Details</span>
           </div>
 
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
             <input
               type="text"
               value={editedData.location?.area || ''}
@@ -127,7 +123,7 @@ function ProfileHeader({ userData, onSave }) {
         </button>
       </div>
     </div>
-  )
+  );
 }
 
-export default ProfileHeader
+export default ProfileHeader;

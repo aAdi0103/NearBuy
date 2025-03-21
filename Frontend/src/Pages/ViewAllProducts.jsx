@@ -21,7 +21,7 @@ const ViewAllProducts = () => {
         {/* Back Button */}
         <button
           onClick={() => navigate(-1)}
-          className="text-black-700 absolute left-5 top-0 flex items-center transition-all hover:text-blue-900"
+          className="text-black-700 absolute left-0 top-0 flex items-center transition-all hover:text-blue-900"
         >
           <FaArrowLeft className="text-md mr-2" /> <span className="font-medium">Back</span>
         </button>

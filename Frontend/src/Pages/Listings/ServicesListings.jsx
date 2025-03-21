@@ -4,7 +4,10 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { axiosInstance } from '../../lib/axios'
 import { toast, Toaster } from 'react-hot-toast'
 import { X, Upload, Camera, DollarSign, Tag, Package, Truck, MapPin } from 'lucide-react'
-
+import {useNavigate } from 'react-router-dom'
+import {
+	FaArrowLeft,
+  } from 'react-icons/fa'
 function ServiceListing() {
   const [selectedCategory, setSelectedCategory] = useState('')
   const [title, setTitle] = useState('')
@@ -19,6 +22,7 @@ function ServiceListing() {
     state: '',
     country: '',
   })
+  const navigate = useNavigate()
 
   const [images, setImages] = useState([])
   const [imagePreview, setImagePreview] = useState(null)
@@ -88,8 +92,14 @@ function ServiceListing() {
     <>
       <Toaster />
       <Navbar />
+       <button
+                      onClick={() => navigate(-1)}
+                      className="text-black-700 absolute left-5 top-20 flex items-center transition-all hover:text-blue-900"
+                    >
+                      <FaArrowLeft className="text-md mr-2" /> <span className="font-medium">Back</span>
+                    </button>
       <div className="flex min-h-screen items-center justify-center bg-gray-100 p-6">
-        <div className="w-full max-w-4xl rounded-2xl bg-white p-6 shadow-lg md:p-10">
+        <div className="w-full max-w-4xl mt-7 rounded-2xl bg-white p-6 shadow-lg md:p-10">
           {/* Heading */}
           <h1 className="mb-4 text-2xl font-bold text-gray-800 md:text-3xl">
             Create a New Service Listing

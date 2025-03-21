@@ -79,8 +79,8 @@ const Newest = ({ userLocation, setUserLocation }) => {
 
   return (
     <div className="mx-auto mt-20 max-w-7xl sm:px-6 lg:px-8">
-      <div className="flex items-center justify-between">
-        <h2 className="mb-6 text-2xl font-semibold text-blue-700">
+      <div className="flex items-center justify-between mb-5">
+        <h2 className="text-2xl max-md:text-xl font-semibold text-blue-700">
           {authUser?.location?.city
             ? `Explore Services near you
  `

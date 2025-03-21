@@ -4,9 +4,12 @@ import { toast } from "react-hot-toast";
 import { ExternalLink, Eye, MessageSquare, ThumbsUp, XCircle , UserPlus,CheckCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
-
+import { useNavigate } from "react-router-dom";
+import {
+	FaArrowLeft,
+  } from 'react-icons/fa'
 const Notification = () => {
-
+	const navigate = useNavigate()
 	const { data: authUser } = useQuery({ queryKey: ["authUser"] });
 
 	const queryClient = useQueryClient();
@@ -32,7 +35,15 @@ const Notification = () => {
 	});
 
 	return (
-		<div className='grid grid-cols-1 lg:grid-cols-4 gap-6'>
+		<>
+		<button
+					  onClick={() => navigate(-1)}
+					  className="text-black-700 absolute left-5 top-4 flex items-center transition-all hover:text-blue-900"
+					>
+					  <FaArrowLeft className="text-md mr-2" /> <span className="font-medium">Back</span>
+					</button>
+		<div className='grid grid-cols-1 lg:grid-cols-4 mt-8 gap-6'>
+			
 			
 			<div className='col-span-1 lg:col-span-3'>
 				<div className='bg-white rounded-lg shadow p-6'>
@@ -113,6 +124,7 @@ const Notification = () => {
 				</div>
 			</div>
 		</div>
+		</>
 	);
 };
 

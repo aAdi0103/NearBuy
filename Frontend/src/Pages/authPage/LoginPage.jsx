@@ -5,7 +5,9 @@ const LoginPage = () => {
   return (
     <div className="flex min-h-screen flex-col justify-center sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <img className="mx-auto h-32 w-auto" src="/logo.svg" alt="LinkedIn" />
+       <div className='flex items-center flex-col justify-center'>
+       <img className="mx-auto h-32 w-auto" src="/src/assets/5.png" alt="LinkedIn" />
+       </div>
         <h2 className="text-center text-2xl font-extrabold text-gray-900">
           Sign in to your account
         </h2>

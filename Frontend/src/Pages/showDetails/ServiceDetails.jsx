@@ -3,12 +3,9 @@ import { useQuery } from '@tanstack/react-query';
 import { axiosInstance } from '../../lib/axios';
 import { useParams } from 'react-router-dom';
 import { FaMapMarkerAlt } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
-import { FaArrowLeft } from 'react-icons/fa';
 import BookingButton from '../Listings/BookingButton';
 
 const ServiceDetails = () => {
-  const navigate = useNavigate();
 
   const { id } = useParams();
   const { data: authUser } = useQuery({
@@ -87,13 +84,7 @@ const ServiceDetails = () => {
               alt={seller.name || 'Seller'}
               className="w-12 h-12 rounded-full object-cover"
             />
-            <button
-              onClick={() => navigate(-1)}
-              className="absolute top-24 left-5 flex items-center text-black-700 hover:text-blue-900 transition-all"
-            >
-              <FaArrowLeft className="mr-2 text-md" />{' '}
-              <span className="font-medium text-xl">Back</span>
-            </button>
+            
             <div className="flex-1">
               <div className="flex items-center space-x-1">
                 <h2 className="text-lg font-semibold">

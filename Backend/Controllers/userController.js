@@ -18,7 +18,7 @@ const getCoordinates = async (address) => {
 
 export const updateProfile = async (req, res) => {
 	try {
-		const allowedFields = ["name", "profilePic", "location","role","About","Phone","latitude","longitude"];
+		const allowedFields = ["name", "profilePic", "location","role","Phone","latitude","longitude"];
 		const updatedData = {};
 		for (const field of allowedFields) {
 			if (req.body[field]) {
@@ -26,11 +26,14 @@ export const updateProfile = async (req, res) => {
 			}
 		}
 		const {location} = req.body;
-		const locationString = `${location.area}, ${location.city}, ${location.state}, ${location.country}`;
-
-		const { lat, lng } = await getCoordinates(locationString);
+		let locationString ="";
+		if(location){
+			 locationString = `${location.area}, ${location.city}, ${location.state}, ${location.country}`;
+			 const { lat, lng } = await getCoordinates(locationString);
         updatedData.latitude = lat;
         updatedData.longitude = lng;
+		}
+		
 		// Handle profile picture upload
 		if (req.body.profilePic) {
 			try{

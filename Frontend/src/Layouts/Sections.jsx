@@ -5,7 +5,7 @@ const Sections = () => {
   return (
     <>
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-center gap-4 bg-zinc-100 px-4 py-7 sm:px-6 lg:px-8">
-        <h1 className="font-mono text-4xl font-bold">What are you looking for?</h1>
+        <h1 className="font-mono text-4xl text-center max-md:2xl font-bold">What are you looking for?</h1>
         <nav className="flex flex-col items-center justify-center gap-6 space-y-4 sm:flex-row sm:space-x-6 sm:space-y-0">
           <NavLink
             to="/sections/product"

@@ -1,8 +1,18 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
-
+import { Link,useNavigate } from 'react-router-dom'
+import {
+	FaArrowLeft,
+  } from 'react-icons/fa'
 function Listing() {
+	const navigate = useNavigate()
   return (
+    <>
+    <button
+                onClick={() => navigate(-1)}
+                className="text-black-700 absolute left-5 top-4 flex items-center transition-all hover:text-blue-900"
+              >
+                <FaArrowLeft className="text-md mr-2" /> <span className="font-medium">Back</span>
+              </button>
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
       <div className="rounded-lg bg-white p-8 text-center shadow-lg">
         <h1 className="mb-6 text-2xl font-semibold text-gray-800">What do you want to list?</h1>
@@ -25,6 +35,7 @@ function Listing() {
         </div>
       </div>
     </div>
+    </>
   )
 }
 

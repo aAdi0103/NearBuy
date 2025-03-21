@@ -20,8 +20,14 @@ import { useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { toast, Toaster } from 'react-hot-toast'
 import Navbar from '../Layouts/Navbar'
+import {useNavigate } from 'react-router-dom'
+import {
+	FaArrowLeft,
+  } from 'react-icons/fa'
 
 const ProfilePage = () => {
+    const navigate = useNavigate()
+  
   const productsRef = useRef(null)
   const servicesRef = useRef(null)
 
@@ -151,6 +157,12 @@ const ProfilePage = () => {
     <>
       <Navbar></Navbar>
       <Toaster></Toaster>
+       <button
+                      onClick={() => navigate(-1)}
+                      className="text-black-700 absolute left-12 top-24 flex items-center transition-all hover:text-blue-900"
+                    >
+                      <FaArrowLeft className="text-md mr-2" /> <span className="font-medium">Back</span>
+                    </button>
       <div className="mx-auto flex max-w-7xl flex-col gap-6 bg-zinc-100 p-4 md:p-6">
         {/* Profile Section */}
         <div className="mt-[-10px] flex flex-col items-center gap-8 rounded-lg bg-white p-6 text-center shadow-lg md:flex-row md:items-start md:gap-16 md:text-left">
@@ -194,10 +206,6 @@ const ProfilePage = () => {
               {FromEmail.location.country}
             </p>
 
-            {/* Reviews Section */}
-            <div className="mt-4">
-              <h1 className="font-bold">Reviews</h1>
-            </div>
           </div>
 
           {FromEmail?.email === authUser?.email && (

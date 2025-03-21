@@ -61,7 +61,7 @@ const Product = () => {
       <div className="mx-auto flex w-screen min-w-full gap-6 p-6">
         <button
           onClick={() => navigate(-1)}
-          className="text-black-700 absolute left-5 top-10 flex items-center text-xl transition-all hover:text-blue-900"
+          className="text-black-700 absolute left-5 top-10 flex items-center text-sm transition-all hover:text-blue-900"
         >
           <FaArrowLeft className="text-md mr-2" /> <span className="font-medium">Back</span>
         </button>

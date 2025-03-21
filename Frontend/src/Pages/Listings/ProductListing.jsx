@@ -4,7 +4,10 @@ import Navbar from '../../Layouts/Navbar'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { axiosInstance } from '../../lib/axios'
 import { toast, Toaster } from 'react-hot-toast'
-
+import {useNavigate } from 'react-router-dom'
+import {
+	FaArrowLeft,
+  } from 'react-icons/fa'
 const ProductListing = () => {
   const [title, setTitle] = useState('')
   const [category, setCategory] = useState('')
@@ -14,6 +17,7 @@ const ProductListing = () => {
   const [condition, setCondition] = useState('New')
   const [images, setImages] = useState([])
   const [imagePreview, setImagePreview] = useState(null)
+  const navigate = useNavigate()
 
   const [location, setLocation] = useState({
     area: '',
@@ -106,11 +110,17 @@ const ProductListing = () => {
 
   return (
     <>
+    <button
+                          onClick={() => navigate(-1)}
+                          className="text-black-700 absolute left-5 top-20 flex items-center transition-all hover:text-blue-900"
+                        >
+                          <FaArrowLeft className="text-md mr-2" /> <span className="font-medium">Back</span>
+                        </button>
       <Toaster />
       <Navbar />
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 px-4 py-8 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-4xl">
-          <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-lg">
+          <div className="overflow-hidden rounded-2xl border mt-5 border-gray-100 bg-white shadow-lg">
             <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-5">
               <h1 className="text-3xl font-bold text-white">List Your Product</h1>
               <p className="mt-2 text-red-900">Please Enter Correct Details to meet Buyer</p>
