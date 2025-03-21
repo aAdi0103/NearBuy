@@ -7,7 +7,7 @@ import cors from 'cors'
 // Load .env from the project root
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-dotenv.config({ path: path.resolve(__dirname, "../.env") });
+dotenv.config({ path: path.resolve(__dirname, "./.env") });
 
 import express from "express";
 import cookieParser from "cookie-parser";
@@ -20,11 +20,19 @@ import serviceRoutes from "./Routes/serviceRouter.js"
 import notificationRoutes from './Routes/notificationRouter.js'
 import nomination from './Routes/nominationRouter.js'
 const app = express();
+
+console.log("Mono:",process.env.MONGO_URI)
+
+if(process.env.NODE_ENV_URL !== "production"){
 app.use(cors({
   origin: "http://localhost:5173",
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
+
+}
+
+
 app.use(cookieParser());
 app.use(express.json({ limit: '50mb' }));
 
@@ -38,11 +46,13 @@ app.use("/api/v1/notifications", notificationRoutes);
 app.use("/api/v1/nomination",nomination)
 
 
+if (process.env.NODE_ENV_URL === "production") {
+  app.use(express.static(path.join(__dirname, "../Frontend/dist")));
 
-app.get("/", (req, res) => {
-  res.send("Hello");
-});
-
+	app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "../Frontend/dist/index.html"));
+	});
+}
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
