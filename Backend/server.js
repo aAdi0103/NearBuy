@@ -44,14 +44,16 @@ app.use("/api/v1/services",serviceRoutes);
 app.use("/api/v1/notifications", notificationRoutes);
 app.use("/api/v1/nomination",nomination)
 
-
 if (process.env.NODE_ENV_URL === "production") {
-  app.use(express.static(path.join(__dirname, "../Frontend/dist")));
+  const frontendPath = path.join(__dirname, "../Frontend/dist");  // Ensure correct case
+  
+  app.use(express.static(frontendPath));  // Serve static files correctly
 
-	app.get("*", (req, res) => {
-		res.sendFile(path.resolve(__dirname, "Frontend", "dist", "index.html"));
-	});
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(frontendPath, "index.html"));  // Ensure correct path
+  });
 }
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
