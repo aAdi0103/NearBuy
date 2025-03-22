@@ -46,7 +46,7 @@ app.use("/api/v1/nomination",nomination)
 
 
 if (process.env.NODE_ENV_URL === "production") {
-  app.use(express.static(path.join(__dirname, "/Frontend/dist")));
+  app.use(express.static(path.join(__dirname, "../Frontend/dist")));
 
 	app.get("*", (req, res) => {
 		res.sendFile(path.resolve(__dirname, "Frontend", "dist", "index.html"));
