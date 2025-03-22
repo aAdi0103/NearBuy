@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 import { fileURLToPath } from 'url';
-import path from "path";
+import path, { dirname } from "path";
 import cors from 'cors'
 
 
@@ -21,7 +21,6 @@ import notificationRoutes from './Routes/notificationRouter.js'
 import nomination from './Routes/nominationRouter.js'
 const app = express();
 
-console.log("Mono:",process.env.MONGO_URI)
 
 if(process.env.NODE_ENV_URL !== "production"){
 app.use(cors({
@@ -47,10 +46,10 @@ app.use("/api/v1/nomination",nomination)
 
 
 if (process.env.NODE_ENV_URL === "production") {
-  app.use(express.static(path.join(__dirname, "../Frontend/dist")));
+  app.use(express.static(path.join(__dirname, "/Frontend/dist")));
 
 	app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "../Frontend/dist/index.html"));
+    res.sendFile(path.resolve(__dirname, "/Frontend/dist/index.html"));
 	});
 }
 

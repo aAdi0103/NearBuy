@@ -20,6 +20,7 @@
     "date-fns": "^4.1.0",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.476.0",
+    "nearbuy": "file:..",
     "NearBuy": "file:..",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
