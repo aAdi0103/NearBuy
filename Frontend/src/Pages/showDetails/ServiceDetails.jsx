@@ -98,63 +98,57 @@ const ServiceDetails = () => {
         )}
       </div>
 
-      <div className="max-w-6xl mt-16 mx-auto bg-white shadow-lg rounded-lg overflow-hidden border p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Product Image */}
-        <div className="md:col-span-2">
-          <div className="relative">
-            <img
-              className="w-full h-80 object-cover rounded-lg"
-              src={service.images || '/placeholder.jpg'}
-              alt={service.title || 'Product Image'}
-            />
-          </div>
-        </div>
+      <div className="max-w-6xl mt-4 mx-auto bg-white shadow-2xl rounded-3xl overflow-hidden border p-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+      {/* Product Image */}
+      <div className="md:col-span-2 relative">
+        <img
+          className="w-full h-96 object-cover rounded-2xl shadow-lg"
+          src={service.images || '/placeholder.jpg'}
+          alt={service.title || 'Product Image'}
+        />
+      </div>
 
-        {/* Product Details */}
+      {/* Product Details */}
+      <div className="flex flex-col justify-between">
         <div>
-          <h2 className="text-3xl font-bold text-gray-900">
-            {service.title || 'Product Title'}
-          </h2>
-          <div className="mt-4">
-            <p className="text-2xl font-bold text-blue-600">
-              ₹{service.price}/{' '}
-              <span className="text-black text-sm">{service.duration}</span>
+          <h2 className="text-4xl font-bold text-gray-900">{service.title || 'Product Title'}</h2>
+          <div className="mt-4 space-y-2">
+            <p className="text-3xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 text-transparent bg-clip-text">
+              ₹{service.price}/ <span className="text-gray-700 text-lg">{service.duration}</span>
             </p>
-            <p className="text-gray-600 text-sm">
+            <p className="text-gray-700 text-md font-medium">
               <strong>Experience:</strong> {service.experience || 'N/A'}
             </p>
-            <p className="text-gray-600 text-sm">
+            <p className="text-gray-700 text-md font-medium">
               <strong>Category:</strong> {service.category || 'N/A'}
             </p>
-            <p className="text-gray-600 text-sm">
-              <strong>Location:</strong> {service.location?.city},{' '}
-              {service.location?.state}, {service.location?.country}
+            <p className="text-gray-700 text-md font-medium flex items-center">
+              <FaMapMarkerAlt className="mr-2 text-red-500" />
+              {service.location?.city}, {service.location?.state}, {service.location?.country}
             </p>
           </div>
 
-          <p className="mt-4 text-gray-700 text-sm">
+          <p className="mt-4 text-gray-600 text-md leading-relaxed">
             {service.description || 'No description available.'}
           </p>
+        </div>
 
-          {/* Action Buttons */}
-          <div className="mt-6 space-y-3">
-            {seller ? (
-              <a href={`/profile/${seller.email}`}>
-                <button className="w-full px-5 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition">
-                  Contact Provider
-                </button>
-              </a>
-            ) : (
-              <p className="text-center text-gray-500">
-                Seller details unavailable
-              </p>
-            )}
+        {/* Action Buttons */}
+        <div className="mt-6 flex flex-col gap-4">
+          {seller ? (
+            <a href={`/profile/${seller.email}`}>
+              <button className="w-full py-3 text-lg font-semibold text-white bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl shadow-md hover:opacity-90 transition-all">
+                Contact Provider
+              </button>
+            </a>
+          ) : (
+            <p className="text-center text-gray-500">Seller details unavailable</p>
+          )}
 
-  <BookingButton authUser={authUser} seller={seller}></BookingButton>
-
-          </div>
+          <BookingButton authUser={authUser} seller={seller} />
         </div>
       </div>
+    </div>
     </>
   );
 };

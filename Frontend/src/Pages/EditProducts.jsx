@@ -89,18 +89,27 @@ const EditProducts = () => {
     mutationFn: async (postData) => {
       const res = await axiosInstance.put(`posts/updatePost/${id}`, postData, {
         headers: { 'Content-Type': 'application/json' },
-      })
-      return res.data
+      });
+      return res.data;
     },
     onSuccess: () => {
-      // resetForm();
-      toast.success('Post Updated successfully')
-      queryClient.invalidateQueries({ queryKey: ['posts'] })
+      toast.success('Post Updated successfully');
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
     },
     onError: (err) => {
-      toast.error(err.response.data.message || 'Failed to create post')
+      const errorMessage = err.response?.data?.message || 'Failed to update post';
+  
+      // Show specific error for coordinates issue
+      if (errorMessage.includes('Coordinates not found')) {
+        toast.error('Coordinates not found for the given address. Please try again.');
+      } else if (errorMessage.includes('Invalid location')) {
+        toast.error('Invalid location. Please enter a correct location with proper spelling.');
+      } else {
+        toast.error(errorMessage);
+      }
     },
-  })
+  });
+  
 
   const handlePostUpdation = async () => {
     try {

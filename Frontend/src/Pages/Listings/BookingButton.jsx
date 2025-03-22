@@ -94,11 +94,12 @@ const BookingButton = ({ seller, authUser }) => {
             <>
               {/* Book Service Button */}
               <button
-                onClick={() => setShowOverlay(true)}
-                className="w-full px-5 py-3 mt-5 bg-yellow-600 text-white font-semibold rounded-lg hover:bg-yellow-700 transition"
-              >
-                Book Service
-              </button>
+  onClick={() => setShowOverlay(true)}
+  className="w-full px-5 py-3 mt-5 bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:opacity-90 active:scale-95"
+>
+  🚀 Book Service
+</button>
+
 
               {/* Negotiation Overlay */}
               {showOverlay && (

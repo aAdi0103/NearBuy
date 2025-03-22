@@ -170,11 +170,12 @@ const Header = ({ authUser }) => {
 
           {/* Search Button */}
           <button
-            type="submit"
-            className="rounded-md bg-blue-600 px-4 py-2 font-semibold text-white"
-          >
-            Search
-          </button>
+  type="submit"
+  className="rounded-lg bg-gradient-to-r from-blue-800 to-blue-500 px-6 py-3 text-lg font-bold text-white shadow-md transition-all duration-300 hover:scale-105 hover:shadow-blue-400/50 focus:ring-2 focus:ring-blue-400 active:scale-95"
+>
+  🔍 Search
+</button>
+
         </form>
 
         {/* Categories */}
@@ -194,36 +195,41 @@ const Header = ({ authUser }) => {
       <div className="mt-6 flex w-full flex-col items-center md:mt-0 md:w-1/2">
         {/* Show Map only if modal is not open */}
         {!isModalOpen && (
-          <div className="flex h-[65vh] w-full items-center justify-center rounded-lg bg-gray-200 max-md:h-[30vh]">
-            {userLocation ? (
-              <MapContainer center={userLocation} zoom={13} className="h-full w-full rounded-lg">
-                {/* Tile Layer (Map Design) */}
-                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-
-                {/* User's Location */}
-                <Marker position={userLocation} icon={defaultIcon}>
-                  <Popup>You are here</Popup>
+          <div className="flex h-[65vh] w-full items-center justify-center rounded-lg bg-gray-200 shadow-lg shadow-gray-400 max-md:h-[30vh]">
+          {userLocation ? (
+            <MapContainer center={userLocation} zoom={13} className="h-full w-full rounded-lg">
+              {/* Tile Layer (Map Design) */}
+              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+        
+              {/* User's Location */}
+              <Marker position={userLocation} icon={defaultIcon}>
+                <Popup>You are here</Popup>
+              </Marker>
+        
+              {/* Service Provider Markers */}
+              {serviceProviders.map((provider) => (
+                <Marker key={provider.id} position={provider.location} icon={defaultIcon}>
+                  <Popup>{provider.name}</Popup>
                 </Marker>
-
-                {/* Service Provider Markers */}
-                {serviceProviders.map((provider) => (
-                  <Marker key={provider.id} position={provider.location} icon={defaultIcon}>
-                    <Popup>{provider.name}</Popup>
-                  </Marker>
-                ))}
-              </MapContainer>
-            ) : (
-              <p className="font-semibold text-red-600">Please allow location or signin ....</p>
-            )}
-          </div>
+              ))}
+            </MapContainer>
+          ) : (
+            <p className="font-semibold text-red-600">Please allow location or sign in...</p>
+          )}
+        </div>
+        
         )}
 
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="mt-4 rounded-md bg-blue-600 px-4 py-2 font-semibold text-white transition-transform hover:scale-105"
-        >
-          View Services near you in map
-        </button>
+<button
+  onClick={() => setIsModalOpen(true)}
+  className="mt-4 rounded-lg bg-gradient-to-r from-blue-600 to-blue-900 px-6 py-3 text-lg font-bold text-white shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-blue-500/50 hover:from-blue-900 hover:to-blue-600 focus:ring-2 focus:ring-blue-500 active:scale-95"
+>
+  View Services Near You on Map
+</button>
+
+
+
+
       </div>
 
       {/* Modal Overlay */}

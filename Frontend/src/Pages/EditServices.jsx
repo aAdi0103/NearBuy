@@ -89,18 +89,26 @@ const EditServices = () => {
     mutationFn: async (serviceData) => {
       const res = await axiosInstance.put(`services/updateService/${id}`, serviceData, {
         headers: { 'Content-Type': 'application/json' },
-      })
-      return res.data
+      });
+      return res.data;
     },
     onSuccess: () => {
-      // resetForm();
-      toast.success('Service Updated successfully')
-      queryClient.invalidateQueries({ queryKey: ['posts'] })
+      toast.success('Service Updated successfully');
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
     },
     onError: (err) => {
-      toast.error(err.response.data.message || 'Failed to create post')
+      const errorMessage = err.response?.data?.message || 'Failed to update service';
+  
+      // Show specific error for coordinates issue
+      if (errorMessage.includes('Coordinates not found')) {
+        toast.error('Coordinates not found for the given address. Please try again.');
+      } else {
+        toast.error(errorMessage);
+      }
     },
-  })
+  });
+  
+  
 
   const handleServiceUpload = async () => {
     try {

@@ -93,31 +93,36 @@ const LandingCate = ({ userLocation }) => {
 
       {/* Features */}
       <div className="mt-20 rounded-lg bg-zinc-100 px-4 py-10 shadow-sm md:px-8 lg:px-16">
-        <h2 className="text-center text-3xl font-bold text-gray-900 md:text-2xl">Our Features</h2>
-        <div className="mt-6 grid grid-cols-1 gap-6 text-center md:grid-cols-2 lg:grid-cols-4">
-          {/* Verified Providers */}
-          <div>
-            <h3 className="text-lg font-semibold text-gray-800">Verified Providers</h3>
-            <p className="text-sm text-gray-600">All service providers are thoroughly vetted</p>
-          </div>
+  <h2 className="text-center text-3xl font-bold text-gray-900 md:text-2xl">Our Features</h2>
+  <div className="mt-6 grid grid-cols-1 gap-6 text-center md:grid-cols-2 lg:grid-cols-3">
+    
+    {/* Verified Providers */}
+    <div>
+      <h3 className="text-lg font-semibold text-gray-800 flex items-center justify-center">
+        Verified Providers <span className="ml-2 text-green-600">✅</span>
+      </h3>
+      <p className="text-sm text-gray-600">All service providers are thoroughly vetted</p>
+    </div>
 
-          {/* Secure Payments */}
-          <div>
-            <h3 className="text-lg font-semibold text-gray-800">Easy Booking</h3>
-            <p className="text-sm text-gray-600">Enjoy a seamless booking experience</p>
-          </div>
+    {/* Easy Booking */}
+    <div>
+      <h3 className="text-lg font-semibold text-gray-800 flex items-center justify-center">
+        Easy Booking <span className="ml-2 text-green-600">✅</span>
+      </h3>
+      <p className="text-sm text-gray-600">Enjoy a seamless booking experience</p>
+    </div>
 
-          {/* Review System */}
-          <div>
-            <h3 className="text-lg font-semibold text-gray-800">Hassle-Free Shopping</h3>
-            <p className="text-sm text-gray-600">Enjoy a risk-free purchase</p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-gray-800">Review System</h3>
-            <p className="text-sm text-gray-600">Transparent feedback from real customers</p>
-          </div>
-        </div>
-      </div>
+    {/* Hassle-Free Shopping */}
+    <div>
+      <h3 className="text-lg font-semibold text-gray-800 flex items-center justify-center">
+        Hassle-Free Shopping <span className="ml-2 text-green-600">✅</span>
+      </h3>
+      <p className="text-sm text-gray-600">Enjoy a risk-free purchase</p>
+    </div>
+
+  </div>
+</div>
+
 
       <footer className="mt-10 bg-gray-900 px-6 py-10 text-gray-400">
         <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 md:grid-cols-4">

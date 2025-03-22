@@ -61,7 +61,7 @@ const Product = () => {
       <div className="mx-auto flex w-screen min-w-full gap-6 p-6">
         <button
           onClick={() => navigate(-1)}
-          className="text-black-700 absolute left-5 top-10 flex items-center text-sm transition-all hover:text-blue-900"
+          className="text-black-700 absolute left-5 top-10 flex items-center text-sm transition-all hover:text-blue-900 max-md:ml-[-10px]"
         >
           <FaArrowLeft className="text-md mr-2" /> <span className="font-medium">Back</span>
         </button>
@@ -70,13 +70,6 @@ const Product = () => {
         <div className="hidden h-[85vh] w-1/4 rounded-lg bg-zinc-200 p-4 shadow-md md:block">
           <h2 className="mb-3 text-lg font-bold">Filters</h2>
 
-          <div>
-            <label className="mb-2 block text-[1.5vw] font-semibold">Location</label>
-            <select className="w-full rounded border p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option className="px-2">All</option>
-              <option>All of {authUser?.location.city}</option>
-            </select>
-          </div>
 
           {/* Category */}
           <div className="mt-4">

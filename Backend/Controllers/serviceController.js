@@ -16,7 +16,7 @@ const getCoordinates = async (address) => {
 
     throw new Error("Coordinates not found");
   } catch (error) {
-    return null; // Return null if no coordinates found
+    throw new Error("Coordinates not found"); // Ensure error is thrown
   }
 };
 
@@ -136,52 +136,58 @@ export const getServices = async function (req, res) {
 
 
 
-export const updateService = async (req,res) =>{
-  
-try {
-  const {id} = req.params;
-    const allowedFields = ["title", "description", "images","location","price","duration","category","experience","language"];
+export const updateService = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const allowedFields = ["title", "description", "images", "location", "price", "duration", "category", "experience", "language"];
     const updatedData = {};
+    
     for (const field of allowedFields) {
       if (req.body[field]) {
         updatedData[field] = req.body[field];
       }
     }
-  const {location}=req.body;
+
+    const { location } = req.body;
     const locationString = `${location.area}, ${location.city}, ${location.state}, ${location.country}`;
 
     // Get latitude and longitude from the formatted location string
-    const { lat, lng } = await getCoordinates(locationString);
-    updatedData.latitude = lat;
-    updatedData.longitude = lng;
+    const coordinates = await getCoordinates(locationString);
+
+    if (!coordinates) {
+      return res.status(400).json({ message: "Coordinates not found for the given address. Please try again." });
+    }
+
+    updatedData.latitude = coordinates.lat;
+    updatedData.longitude = coordinates.lng;
 
     // Handle profile picture upload
     if (req.body.images) {
-      try{
-      const result = await cloudinary.uploader.upload(req.body.images);
-      updatedData.images = result.secure_url;
-      }catch(error){
+      try {
+        const result = await cloudinary.uploader.upload(req.body.images);
+        updatedData.images = result.secure_url;
+      } catch (error) {
+        console.error("Error uploading image:", error);
       }
     }
 
-    // Ensure user exists before updating
+    // Ensure service exists before updating
     const service = await Service.findByIdAndUpdate(
-      id, // Ensures only the logged-in user can update their profile
+      id,
       { $set: updatedData },
-      { new: true, select: "-password" } // Exclude password field from response
+      { new: true, select: "-password" }
     );
 
     if (!service) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "Service not found" });
     }
 
     res.json(service);
+  } catch (error) {
+    console.error("Error in updateService controller:", error);
+    res.status(500).json({ message: error.message || "Server error" });
   }
-   catch (error) {
-    console.error("Error in updateProfile controller:", error);
-    res.status(500).json({ message: "Server error" });
-  }
-}
+};
 
 export const getServiceById = async (req, res) => {
   try {

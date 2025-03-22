@@ -127,7 +127,7 @@ const ProductListing = () => {
           <div className="overflow-hidden rounded-2xl border mt-5 border-gray-100 bg-white shadow-lg">
             <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-5">
               <h1 className="text-3xl font-bold text-white">List Your Product</h1>
-              <p className="mt-2 text-red-900">Please Enter Correct Details to meet Buyer</p>
+              <p className="mt-2 text-black">Please Enter Correct Details to meet Buyer</p>
             </div>
 
             <div className="space-y-8 p-8">

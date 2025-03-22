@@ -1,12 +1,11 @@
 import { Link } from 'react-router-dom'
 import LoginForm from './LoginForm'
-
 const LoginPage = () => {
   return (
     <div className="flex min-h-screen flex-col justify-center sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
        <div className='flex items-center flex-col justify-center'>
-       <img className="mx-auto w-[20vw] mt-7" src="/src/assets/NearBuy.svg" alt="NearBuy" />
+       <img className="mx-auto w-[20vw] mt-7" src='/NearBuy.svg' alt="NearBuy" />
        </div>
         <h2 className="text-center text-2xl font-bold text-gray-900">
           Sign in to your account

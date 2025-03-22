@@ -170,24 +170,15 @@ const ProfilePage = () => {
           <div className="flex flex-col items-center text-center md:w-1/3">
             {FromEmail ? (
               <>
-                <img
-                  src={FromEmail.profilePic || '/avtar.png'}
-                  alt="Trainer"
-                  className="h-32 w-32 rounded-full border-4 border-gray-300"
-                />
+              <div className="flex justify-center">
+  <img
+    src={FromEmail.profilePic || '/avtar.png'}
+    alt="Trainer"
+    className="h-32 w-32 bg-center bg-cover rounded-full border-4 border-gray-300 mx-auto"
+  />
+</div>
 
-                {/* Social Icons */}
-                <div className="mt-4 flex gap-4">
-                  <a href="#" className="hover:text-gray-500">
-                    <Facebook size={30} />
-                  </a>
-                  <a href="#" className="hover:text-gray-500">
-                    <Instagram size={30} />
-                  </a>
-                  <a href="#" className="hover:text-gray-500">
-                    <Linkedin size={30} />
-                  </a>
-                </div>
+
 
                 {/* Buttons */}
                 <ConatctPage phoneNumber={FromEmail.Phone} email={FromEmail.email} />
@@ -220,13 +211,16 @@ const ProfilePage = () => {
         </div>
 
         {/* Navigation Links */}
-        <div className="flex flex-col items-center justify-center gap-5">
-          <h1 className="font-semibold text-zinc-600">What you are looking for?</h1>
-          <div className="mt-[-10px] flex gap-9">
-             {/* Products Button */}
+        <div className="flex flex-col items-center justify-center gap-5 px-4 sm:px-0">
+  <h1 className="text-lg font-semibold text-zinc-700 sm:text-xl">
+    What are you looking for?
+  </h1>
+
+  <div className="mt-[-10px] flex flex-wrap justify-center gap-4 sm:flex-nowrap sm:gap-6">
+  {/* Products Button */}
   <button
     onClick={() => scrollToSection(productsRef)}
-    className="rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-3 text-white font-semibold shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
+    className="w-full max-w-[200px] rounded-lg bg-black px-6 py-3 text-white font-semibold shadow-lg transition-all duration-300 hover:bg-opacity-80 hover:scale-105 sm:w-auto"
   >
     📦 Products
   </button>
@@ -234,22 +228,24 @@ const ProfilePage = () => {
   {/* Services Button */}
   <button
     onClick={() => scrollToSection(servicesRef)}
-    className="rounded-lg bg-gradient-to-r from-green-500 to-teal-600 px-6 py-3 text-white font-semibold shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
+    className="w-full max-w-[200px] rounded-lg bg-black px-6 py-3 text-white font-semibold shadow-lg transition-all duration-300 hover:bg-opacity-80 hover:scale-105 sm:w-auto"
   >
     🛠️ Services
   </button>
 
   {/* Your Bookings Button (Only visible if authorized) */}
   {authUser.email === email && (
-    <button className="rounded-lg bg-gradient-to-r from-yellow-500 to-orange-600 px-6 py-3 text-white font-semibold shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl">
+    <button className="w-full max-w-[200px] rounded-lg bg-black px-6 py-3 text-white font-semibold shadow-lg transition-all duration-300 hover:bg-opacity-80 hover:scale-105 sm:w-auto">
       <a href={`/userBookings/${authUser._id}`} className="block w-full text-center">
         📅 Your Bookings
       </a>
     </button>
   )}
+</div>
 
-          </div>
-        </div>
+
+</div>
+
 
         {FromEmail && (
           <div>

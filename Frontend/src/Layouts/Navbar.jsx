@@ -3,7 +3,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { axiosInstance } from '../lib/axios';
 import { Menu, X, MapPin, User, ChevronDown, Bell } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import logo from '../assets/2.png';
 
 const Navbar = () => {
   const queryClient = useQueryClient();
@@ -66,7 +65,7 @@ const Navbar = () => {
           <div className="flex items-center">
             <Link to="/">
               <div className="flex items-center">
-              <img className="mx-auto w-[10vw] max-md:w-[28vw]" src="/src/assets/NearBuy.svg" alt="NearBuy" />
+              <img className="mx-auto w-[10vw] max-md:w-[28vw]" src="/NearBuy.svg" alt="NearBuy" />
                 
               </div>
             </Link>
@@ -75,16 +74,21 @@ const Navbar = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-4">
             {authUser && (
-              <div className="flex items-center text-gray-600">
-                <MapPin className="mr-1 h-4 w-4" />
-                <span className="font-mono text-blue-600">{userLocation}</span>
-              </div>
+              <div className="flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-lg shadow-sm">
+              <MapPin className="h-5 w-5 text-red-500 drop-shadow-md" />
+              <span className="text-lg font-semibold text-black font-mono tracking-wide">
+                {userLocation}
+              </span>
+            </div>
+            
             )}
             {authUser ? (
               <>
-                <button className="bg-yellow-600 px-4 py-2 text-white hover:bg-blue-700 rounded-md">
-                  <Link to="/list">List Services/Items</Link>
-                </button>
+             <button className="relative px-5 py-2 text-lg font-bold text-white transition-all duration-300 rounded-xl bg-black shadow-md hover:bg-opacity-80 hover:scale-105 focus:ring-2 focus:ring-gray-500">
+  <Link to="/list">List Services/Items</Link>
+</button>
+
+
                 <Link to="/notifications" className="relative text-neutral">
                   <Bell size={20} />
                   {pendingNotificationCount > 0 && (
