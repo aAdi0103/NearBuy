@@ -173,7 +173,7 @@ const Header = ({ authUser }) => {
   type="submit"
   className="rounded-lg bg-gradient-to-r from-blue-800 to-blue-500 px-6 py-3 text-lg font-bold text-white shadow-md transition-all duration-300 hover:scale-105 hover:shadow-blue-400/50 focus:ring-2 focus:ring-blue-400 active:scale-95"
 >
-  🔍 Search
+   Search
 </button>
 
         </form>

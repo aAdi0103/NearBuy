@@ -30,7 +30,7 @@ const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const userLocation = authUser
-    ? `${authUser.location.area || ''} ${authUser.location.city || ''} ${authUser.location.state || ''} ${authUser.location.country || ''}`.trim()
+    ? `${authUser.location.area || ''}, ${authUser.location.city || ''}`.trim()
     : 'Set your location';
 
   const { mutate: logout } = useMutation({
@@ -56,6 +56,7 @@ const Navbar = () => {
   const pendingNotificationCount = notifications?.data.notifications.filter(
     (notif) => notif.status === 'sent'
   ).length;
+  console.log()
 
   return (
     <nav className="relative bg-white shadow-sm">
