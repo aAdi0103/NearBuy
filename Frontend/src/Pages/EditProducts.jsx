@@ -87,10 +87,29 @@ const EditProducts = () => {
 
   const { mutate: updatePostMutation, isPending } = useMutation({
     mutationFn: async (postData) => {
-      const res = await axiosInstance.put(`posts/updatePost/${id}`, postData, {
-        headers: { 'Content-Type': 'application/json' },
-      });
-      return res.data;
+      try {
+        const res = await axiosInstance.put(`posts/updatePost/${id}`, postData, {
+          headers: { 'Content-Type': 'application/json' },
+        });
+        return res.data;
+      } catch (error) {
+        const errorMessage = error.response?.data?.message || 'Failed to update post';
+  
+        // Show specific error messages
+        if (errorMessage.includes('Coordinates not found')) {
+          toast.error('Coordinates not found for the given address. Please try again.');
+        } else if (errorMessage.includes('Invalid location')) {
+          toast.error('Invalid location. Please enter a correct location with proper spelling.');
+        } else if (errorMessage.includes('Image rejected')) {
+          toast.error(errorMessage); // Show specific rejection reason
+        } else if (errorMessage.includes('Your post contains restricted words')) {
+          toast.error('Your post contains restricted words. Please remove them and try again.');
+        } else {
+          toast.error(errorMessage);
+        }
+  
+        throw errorMessage;
+      }
     },
     onSuccess: () => {
       toast.success('Post Updated successfully');
@@ -98,17 +117,11 @@ const EditProducts = () => {
     },
     onError: (err) => {
       const errorMessage = err.response?.data?.message || 'Failed to update post';
-  
-      // Show specific error for coordinates issue
-      if (errorMessage.includes('Coordinates not found')) {
-        toast.error('Coordinates not found for the given address. Please try again.');
-      } else if (errorMessage.includes('Invalid location')) {
-        toast.error('Invalid location. Please enter a correct location with proper spelling.');
-      } else {
-        toast.error(errorMessage);
-      }
+      toast.error(errorMessage);
     },
   });
+  
+
   
 
   const handlePostUpdation = async () => {

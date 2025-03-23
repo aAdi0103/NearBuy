@@ -234,32 +234,36 @@ const Header = ({ authUser }) => {
 
       {/* Modal Overlay */}
       {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="min-h-[80vh] w-11/12 rounded-md bg-white p-6 text-center shadow-lg">
-            <h2 className="mb-4 text-xl font-semibold">Map View</h2>
-            {userLocation ? (
-              <MapContainer center={userLocation} zoom={13} className="h-[80vh] w-full rounded-lg">
-                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                <Marker position={userLocation} icon={defaultIcon}>
-                  <Popup>You are here</Popup>
-                </Marker>
-                {serviceProviders.map((provider) => (
-                  <Marker key={provider.id} position={provider.location} icon={defaultIcon}>
-                    <Popup>{provider.name}</Popup>
-                  </Marker>
-                ))}
-              </MapContainer>
-            ) : (
-              <p className="text-gray-500">Fetching location...</p>
-            )}
-            <button
-              onClick={() => setIsModalOpen(false)}
-              className="mt-4 rounded-md bg-red-500 px-4 py-2 text-white"
-            >
-              Close
-            </button>
-          </div>
-        </div>
+       <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+       <div className="min-h-[80vh] w-11/12 rounded-md bg-white p-6 text-center shadow-lg relative">
+         {/* Close Button at the top right corner */}
+         <button
+           onClick={() => setIsModalOpen(false)}
+           className="absolute top-2 right-2 text-lg p-2 rounded-md font-semibold bg-black text-white hover:text-red-700 focus:outline-none"
+         >
+           Close
+         </button>
+     
+         <h2 className="mb-4 text-xl font-semibold">Map View</h2>
+         {userLocation ? (
+           <MapContainer center={userLocation} zoom={13} className="h-[80vh] w-full rounded-lg">
+             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+             <Marker position={userLocation} icon={defaultIcon}>
+               <Popup>You are here</Popup>
+             </Marker>
+             {serviceProviders.map((provider) => (
+               <Marker key={provider.id} position={provider.location} icon={defaultIcon}>
+                 <Popup>{provider.name}</Popup>
+               </Marker>
+             ))}
+           </MapContainer>
+         ) : (
+           <p className="text-gray-500">Fetching location...</p>
+         )}
+       </div>
+     </div>
+     
+     
       )}
     </div>
   )

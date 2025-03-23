@@ -37,7 +37,26 @@ function ServiceListing() {
         });
         return res.data;
       } catch (error) {
-        throw error.response?.data?.message || "Failed to create service";
+        // Extract error message from backend response
+        const errorMessage = error.response?.data?.message || "Failed to create service";
+  
+        // Handle specific errors
+        if (errorMessage.includes("Image rejected")) {
+          toast.error(errorMessage); // Show specific image rejection reason
+          throw new Error(); // Throw empty error to prevent duplication
+        } else if (errorMessage.includes("Coordinates not found")) {
+          toast.error("Coordinates not found for the given address. Please try again.");
+          throw new Error();
+        } else if (errorMessage.includes("Invalid location")) {
+          toast.error("Invalid location. Please enter a correct location with proper spelling.");
+          throw new Error();
+        } else if (errorMessage.includes("restricted words")) {
+          toast.error(errorMessage); // Handle banned word error specifically
+          throw new Error();
+        }
+  
+        // Throw the extracted error message only if it's not already handled
+        throw new Error(errorMessage);
       }
     },
     onSuccess: () => {
@@ -45,9 +64,15 @@ function ServiceListing() {
       queryClient.invalidateQueries({ queryKey: ['services'] });
     },
     onError: (err) => {
-      toast.error(err || 'Something went wrong. Please check your location spelling.');
+      // Ensure error is not displayed twice
+      if (err.message) {
+        toast.error(err.message);
+      }
     },
   });
+  
+
+
   
 
   const handleChange = (e) => {

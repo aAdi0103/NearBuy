@@ -103,32 +103,33 @@ const BookingButton = ({ seller, authUser }) => {
 
               {/* Negotiation Overlay */}
               {showOverlay && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                  <div className="bg-white p-6 rounded-lg shadow-lg w-[50vw]">
-                    <h2 className="text-lg font-semibold mb-2">Confirm Booking</h2>
-                    <textarea
-                      className="w-full p-2 border rounded-lg"
-                      rows="4"
-                      placeholder="Enter a message for the provider like Price negotiation, your availability, and more..."
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                    ></textarea>
-                    <div className="mt-4 flex justify-between">
-                      <button
-                        className="px-4 py-2 bg-red-500 text-white rounded-lg"
-                        onClick={() => setShowOverlay(false)}
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        className="px-4 py-2 bg-green-500 text-white rounded-lg"
-                        onClick={handleConfirmBooking}
-                      >
-                        Confirm Booking
-                      </button>
-                    </div>
-                  </div>
-                </div>
+               <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+               <div className="bg-white p-6 rounded-lg shadow-lg w-[90vw] sm:w-[50vw]">
+                 <h2 className="text-lg font-semibold mb-2">Confirm Booking</h2>
+                 <textarea
+                   className="w-full p-2 border rounded-lg"
+                   rows="4"
+                   placeholder="Enter a message for the provider like Price negotiation, your availability, and more..."
+                   value={message}
+                   onChange={(e) => setMessage(e.target.value)}
+                 ></textarea>
+                 <div className="mt-4 flex justify-between">
+                   <button
+                     className="px-4 py-2 bg-red-500 text-white rounded-lg"
+                     onClick={() => setShowOverlay(false)}
+                   >
+                     Cancel
+                   </button>
+                   <button
+                     className="px-4 py-2 bg-green-500 text-white rounded-lg"
+                     onClick={handleConfirmBooking}
+                   >
+                     Confirm Booking
+                   </button>
+                 </div>
+               </div>
+             </div>
+             
               )}
             </>
           )}

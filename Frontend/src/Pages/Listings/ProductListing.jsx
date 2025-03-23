@@ -56,7 +56,23 @@ const ProductListing = () => {
         });
         return res.data;
       } catch (error) {
-        throw error.response?.data?.message || "Failed to create post";
+        // Extract error message from backend response
+        const errorMessage = error.response?.data?.message || "Failed to create post";
+  
+        // Handle specific errors
+        if (errorMessage.includes("Image rejected")) {
+          toast.error(errorMessage); // Show specific image rejection reason
+        } else if (errorMessage.includes("Coordinates not found")) {
+          toast.error("Coordinates not found for the given address. Please try again.");
+        } else if (errorMessage.includes("Invalid location")) {
+          toast.error("Invalid location. Please enter a correct location with proper spelling.");
+        } else if (errorMessage.includes('Your post contains restricted words')) {
+          toast.error('Your post contains restricted words. Please remove them and try again.');
+        } else {
+          toast.error("Post creation failed. Please try again.");
+        }
+  
+        throw errorMessage;
       }
     },
     onSuccess: () => {
@@ -67,6 +83,9 @@ const ProductListing = () => {
       toast.error(err || 'Something went wrong. Please check your location spelling.');
     },
   });
+  
+
+
   
 
   const handlePostCreation = async () => {

@@ -1,8 +1,85 @@
 import Post from "../Models/PostModel.js";
 import User from "../Models/UserModel.js"
 import cloudinary from '../Lib/cloudinaryConfig.js'
-
+import {analyzeImage} from '../Lib/signtEngine.js'
 import axios from "axios";
+import levenshtein from "fast-levenshtein";
+
+
+const bannedWords =
+
+ [
+  "चूतिया", // chutiya (idiot/asshole)
+  "भोसड़ीके", // bhosdike (crude insult)
+  "मादरचोद", // madarchod (motherfucker)
+  "बहनचोद", // behenchod (sisterfucker)
+  "गांड", // gaand (ass)
+  "लंड", // lund (dick)
+  "हरामी", // harami (bastard)
+  "कमीना", // kameena (jerk/lowlife)
+  "साला", // sala (brother-in-law, used as an insult)
+  "साली", // sali (sister-in-law, used as an insult)
+  "रंडी", // randi (whore)
+  "कुतिया", // kutiya (bitch)
+  "भड़वा", // bhadwa (pimp)
+  "चूस", // choos (suck, often vulgar in context)
+  "फट्टू", // fattu (coward, mildly offensive)
+  "fuck",
+  "shit",
+  "ass",
+  "asshole",
+  "bitch",
+  "bastard",
+  "dick",
+  "pussy",
+  "cunt",
+  "damn",
+  "hell",
+  "fucker",
+  "motherfucker",
+  "whore",
+  "slut",
+  "cock",
+  "prick",
+  "twat",
+  "wanker",
+  "bullshit", "chutiyapa", // nonsense/stupidity
+  "gandu", // ass (slang variation)
+  "bhenchod", // sisterfucker (shortened)
+  "mc", // abbreviation for madarchod
+  "bc", // abbreviation for behenchod
+  "fuckingwala", // crude emphasis
+  "shittya", // shitty (mixed slang)
+  "assu", // ass (casual slang)
+  "lundfakeer", // dick beggar (crude insult)
+  "haramipanti", // bastard-like behavior
+  "randibaaz", // womanizer/slutty behavior
+  "gaandmasti", // ass-related mischief
+  "bakchodi", // bullshit/nonsense
+  "chodu", // fucker (slang variation)
+  "fattugiri", // cowardice (slang)
+  "randikhana"
+
+ ]
+
+ function normalizeText(text) {
+  if (typeof text !== 'string') {
+      text = String(text); // Convert to string if it's not already
+  }
+  return text.toLowerCase().replace(/[^a-zA-Z0-9]/g, ""); // Remove special characters
+}
+
+
+function isSimilar(word, target) {
+    return levenshtein.get(word, target) <= 2; // Allow only 1 letter difference
+}
+
+function containsBannedWords(text) {
+    const cleanedText = normalizeText(text);
+    return bannedWords.some((word) =>
+        isSimilar(cleanedText, word) // Check for close matches
+    );
+}
 const getCoordinates = async (address) => {
   try {
     const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json`;
@@ -22,8 +99,6 @@ const getCoordinates = async (address) => {
 };
 
 
-
-
 export const createPosts = async (req, res) => {
   try {
     const { heading, description, images, location, price, category, quantity, condition } = req.body;
@@ -32,7 +107,13 @@ export const createPosts = async (req, res) => {
     if (!heading || !description || !location || !price || !category || !quantity || !condition) {
       return res.status(400).json({ message: "All required fields must be provided." });
     }
-
+    if (containsBannedWords(heading)) {
+      return res.status(400).json({ message: "Your post contains restricted words in the title." });
+    }
+    if (containsBannedWords(description)) {
+      return res.status(400).json({ message: "Your post contains restricted words in the description." });
+    }
+  
     const locationString = `${location.area}, ${location.city}, ${location.state}, ${location.country}`;
 
     let lat, lng;
@@ -50,6 +131,12 @@ export const createPosts = async (req, res) => {
       } catch (uploadError) {
         return res.status(500).json({ message: "Image upload failed", error: uploadError.message });
       }
+    }
+
+
+    const moderationResult = await analyzeImage(uploadedImage);
+    if (!moderationResult.isSafe) {
+      return res.status(400).json({ message: `Image rejected: ${moderationResult.reason}` });
     }
 
     const newPost = new Post({
@@ -157,6 +244,12 @@ export const updatePostt = async (req, res) => {
         updatedData[field] = req.body[field];
       }
     }
+    if (containsBannedWords(updatedData.heading)) {
+      return res.status(400).json({ message: "Your post contains restricted words in the title." });
+    }
+    if (containsBannedWords(updatedData.description)) {
+      return res.status(400).json({ message: "Your post contains restricted words in the description." });
+    }
 
     const { location } = req.body;
     const locationString = `${location.area}, ${location.city}, ${location.state}, ${location.country}`;
@@ -179,6 +272,10 @@ export const updatePostt = async (req, res) => {
       } catch (error) {
         console.error("Error uploading image:", error);
       }
+    }
+    const moderationResult = await analyzeImage(updatedData.images);
+    if (!moderationResult.isSafe) {
+      return res.status(400).json({ message: `Image rejected: ${moderationResult.reason}` });
     }
 
     // Ensure post exists before updating

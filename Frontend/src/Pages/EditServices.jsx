@@ -78,6 +78,7 @@ const EditServices = () => {
       setLanguage(ServiceDetails.language || '')
       setDuration(ServiceDetails.duration || '')
       setLocation({
+        area:ServiceDetails.location?.area||'',
         city: ServiceDetails.location?.city || '',
         state: ServiceDetails.location?.state || '',
         country: ServiceDetails.location?.country || '',
@@ -87,26 +88,45 @@ const EditServices = () => {
 
   const { mutate: updateServiceMutation, isPending } = useMutation({
     mutationFn: async (serviceData) => {
-      const res = await axiosInstance.put(`services/updateService/${id}`, serviceData, {
-        headers: { 'Content-Type': 'application/json' },
-      });
-      return res.data;
+      try {
+        const res = await axiosInstance.put(`services/updateService/${id}`, serviceData, {
+          headers: { 'Content-Type': 'application/json' },
+        });
+        return res.data;
+      } catch (error) {
+        const errorMessage = error.response?.data?.message || 'Failed to update service';
+  
+        // Handle specific errors
+        if (errorMessage.includes("Image rejected")) {
+          toast.error(errorMessage); // Show specific image rejection reason
+          throw new Error(); // Prevents further error handling
+        } else if (errorMessage.includes("Coordinates not found")) {
+          toast.error("Coordinates not found for the given address. Please try again.");
+          throw new Error();
+        } else if (errorMessage.includes("Invalid location")) {
+          toast.error("Invalid location. Please enter a correct location with proper spelling.");
+          throw new Error();
+        } else if (errorMessage.includes("Your post contains restricted words")) {
+          toast.error("Your post contains restricted words. Please avoid using offensive language.");
+          throw new Error();
+        }
+  
+        // Throw only if error is not handled above
+        throw new Error(errorMessage);
+      }
     },
     onSuccess: () => {
       toast.success('Service Updated successfully');
-      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      queryClient.invalidateQueries({ queryKey: ['services'] });
     },
     onError: (err) => {
-      const errorMessage = err.response?.data?.message || 'Failed to update service';
-  
-      // Show specific error for coordinates issue
-      if (errorMessage.includes('Coordinates not found')) {
-        toast.error('Coordinates not found for the given address. Please try again.');
-      } else {
-        toast.error(errorMessage);
+      if (err.message) {
+        toast.error(err.message);
       }
     },
   });
+  
+
   
   
 
