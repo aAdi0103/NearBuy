@@ -3,7 +3,6 @@ import dotenv from "dotenv";
 
 dotenv.config();
 console.log(process.env.CLOUDINARY_API_KEY);
-console.log("jhr")
 class CloudinarySingleton {
   constructor() {
     if (!CloudinarySingleton.instance) {

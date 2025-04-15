@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import { fileURLToPath } from 'url';
 import path, { dirname } from "path";
 import cors from 'cors'
-
+import {Redis} from 'ioredis'
 
 // Load .env from the project root
 const __filename = fileURLToPath(import.meta.url);
@@ -20,6 +20,7 @@ import serviceRoutes from "./Routes/serviceRouter.js"
 import notificationRoutes from './Routes/notificationRouter.js'
 import nomination from './Routes/nominationRouter.js'
 const app = express();
+const redisClient=new Redis();
 
 
 if(process.env.NODE_ENV_URL !== "production"){
