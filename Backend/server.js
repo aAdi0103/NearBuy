@@ -11,7 +11,6 @@ dotenv.config({ path: path.resolve(__dirname, "./.env") });
 import express from "express";
 import cookieParser from "cookie-parser";
 import { connectDB } from "./Lib/db.js";
-import cloudinaryInstance from "./Lib/cloudinaryConfig.js"; // Import after dotenv.config()
 import authRoutes from "./Routes/authRouter.js";
 import userRoutes from "./Routes/userRouter.js"
 import postRoutes from "./Routes/postRouter.js"

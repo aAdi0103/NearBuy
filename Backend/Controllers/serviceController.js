@@ -4,7 +4,7 @@ import cloudinary from "../Lib/cloudinaryConfig.js";
 import axios from "axios";
 import {analyzeImage} from '../Lib/signtEngine.js'
 import levenshtein from "fast-levenshtein";
-
+import redis from "../Lib/redis.js";
 const bannedWords =
 
  [
@@ -502,25 +502,34 @@ export const getNearbyServices = async (req, res) => {
 export const getSearchedServices = async (req, res) => {
   try {
     const { location, search } = req.query;
-    const serviceString = String(search);
-   console.log(search)
-    // Get coordinates for the given location
+     
+    // Step 1: Get coordinates for the location
     const coordinates = await getCoordinates(location);
     if (!coordinates) {
       return res.status(400).json({ message: "Invalid location, please select another." });
     }
 
     const { lat, lng } = coordinates;
-    
-    // Radius of Earth in km
-    const earthRadius = 6371;
-    const maxDistance = 25; // 25km radius
 
-    // Convert latitude and longitude from degrees to radians
+    // Step 2: Use precise coordinates in Redis cache key
+    const cacheKey = `services:${search}:${lat.toFixed(4)}:${lng.toFixed(4)}`;
+
+    // Step 3: Check Redis cache
+    const cachedData = await redis.get(cacheKey);
+    if (cachedData) {
+      console.log("Returning from Redis...");
+      return res.status(200).json(JSON.parse(cachedData));
+    }
+
+    const earthRadius = 6371;
+    const maxDistance = 25;
+
     const latRadians = (Math.PI / 180) * lat;
     const lngRadians = (Math.PI / 180) * lng;
 
-    // Query to find services within a 25km radius using Haversine formula
+    const serviceString = String(search);
+
+    // Step 4: MongoDB query with haversine
     const services = await Service.find({
       $or: [
         { title: { $regex: serviceString, $options: "i" } },
@@ -534,34 +543,45 @@ export const getSearchedServices = async (req, res) => {
               {
                 $acos: {
                   $add: [
-                    { 
+                    {
                       $multiply: [
                         { $sin: latRadians },
-                        { $sin: { $multiply: ["$latitude", Math.PI / 180] } }
-                      ]
+                        { $sin: { $multiply: ["$latitude", Math.PI / 180] } },
+                      ],
                     },
-                    { 
+                    {
                       $multiply: [
                         { $cos: latRadians },
                         { $cos: { $multiply: ["$latitude", Math.PI / 180] } },
-                        { $cos: { $subtract: [{ $multiply: ["$longitude", Math.PI / 180] }, lngRadians] } }
-                      ]
-                    }
-                  ]
-                }
-              }
-            ]
+                        {
+                          $cos: {
+                            $subtract: [
+                              { $multiply: ["$longitude", Math.PI / 180] },
+                              lngRadians,
+                            ],
+                          },
+                        },
+                      ],
+                    },
+                  ],
+                },
+              },
+            ],
           },
-          maxDistance
-        ]
-      }
+          maxDistance,
+        ],
+      },
     });
 
-    res.json(services);
+    // Step 5: Save to Redis cache
+    await redis.set(cacheKey, JSON.stringify(services), "EX", 60 * 5); // 5 minutes
+
+    res.status(200).json(services);
   } catch (error) {
-    console.error(error);
+    console.error("Error in getSearchedServices:", error);
     res.status(500).json({ message: "Error fetching services" });
   }
 };
+
 
 

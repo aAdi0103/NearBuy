@@ -4,8 +4,7 @@ import cloudinary from '../Lib/cloudinaryConfig.js'
 import {analyzeImage} from '../Lib/signtEngine.js'
 import axios from "axios";
 import levenshtein from "fast-levenshtein";
-
-
+import redis from '../Lib/redis.js'
 const bannedWords =
 
  [
@@ -61,6 +60,8 @@ const bannedWords =
   "randikhana"
 
  ]
+
+
 
  function normalizeText(text) {
   if (typeof text !== 'string') {
@@ -186,7 +187,7 @@ export const getPostsByIds = async (req, res) => {
 
 export const getFeedPosts = async function (req, res) {
   try {
-    const userId = req.user.id; // Get the logged-in user's ID
+    const userId = req.user.id;
 
     const posts = await Post.find({ author: userId }) 
       .sort({ createdAt: -1 });
@@ -392,24 +393,43 @@ export const getSearchedProducts = async (req, res) => {
   try {
     const { location, search } = req.query;
     const productString = String(search);
-    const coordinates = await getCoordinates(location);
 
+    // Get coordinates first
+    const coordinates = await getCoordinates(location);
     if (!coordinates) {
       return res.status(400).json({ message: "Invalid location, please select another." });
     }
 
+    const { lat, lng } = coordinates;
+
+    // Use coordinates in cache key for uniqueness
+    const cacheKey = `products:${productString}:${lat.toFixed(4)}:${lng.toFixed(4)}`;
+
+    // Check if data exists in Redis
+    const cachedData = await redis.get(cacheKey);
+    if (cachedData) {
+      return res.json(JSON.parse(cachedData));
+    }
+
+    // Build MongoDB query
     const query = {
-      latitude: { $gte: coordinates.lat - 0.1, $lte: coordinates.lat + 0.1 },
-      longitude: { $gte: coordinates.lng - 0.1, $lte: coordinates.lng + 0.1 },
+      latitude: { $gte: lat - 0.1, $lte: lat + 0.1 },
+      longitude: { $gte: lng - 0.1, $lte: lng + 0.1 },
       $or: [
         { heading: { $regex: productString, $options: "i" } },
         { category: { $regex: productString, $options: "i" } },
       ],
     };
+
+    // Fetch from MongoDB
     const products = await Post.find(query);
+
+    // Save the result to Redis for 5 minutes
+    await redis.set(cacheKey, JSON.stringify(products), "EX", 60 * 5);
+
     res.json(products);
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching products:", error);
     res.status(500).json({ message: "Error fetching products" });
   }
 };
