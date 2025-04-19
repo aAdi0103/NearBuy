@@ -151,7 +151,7 @@ const Header = ({ authUser }) => {
           <input
             type="text"
             placeholder="Enter your location"
-            value={location}
+            value={location}  
             onChange={(e) => setLocation(e.target.value)}
             className="w-full rounded-md border border-gray-300 px-4 py-2 focus:outline-none"
           />
