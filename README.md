@@ -1,3 +1,9 @@
+To run on your Machine:
+step 1: clone the Repogitory in VS code
+step 2: run 'npm i' command in Backend Directory and 'npm i' in Frontend Directory
+step 3: run 'npm run start' in Backend Directory and 'npm run dev' in Frontend Directory
+
+
 NearBuy: A Local Commerce Platform
 1. Introduction :
 Overview
