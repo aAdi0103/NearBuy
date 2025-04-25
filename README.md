@@ -1,7 +1,40 @@
-To run on your Machine:
-step 1: clone the Repogitory in VS code
-step 2: run 'npm i' command in Backend Directory and 'npm i' in Frontend Directory
-step 3: run 'npm run start' in Backend Directory and 'npm run dev' in Frontend Directory
+⚙️ Installation
+1. Clone the Repository
+git clone <repo-url>
+cd <project-root-directory>
+2. Set Up Environment Variables
+Create a .env file inside the backend directory and add the following variables:
+
+PORT=3000
+MONO_URI=<YOUR_MONGO_URI>
+REDIS_HOST=<YOUR_REDIS_HOST>
+REDIS_PORT=<YOUR_REDIS_PORT>
+REDIS_PASSWORD=<YOUR_REDIS_PASSWORD>
+JWT_SECRET=<YOUR_JWT_SECRET>
+CLOUDINARY_API_KEY=<YOUR_CLOUDINARY_API_KEY>
+CLOUDINARY_API_SECRET=<YOUR_CLOUDINARY_API_SECRET>
+CLOUDINARY_CLOUD_NAME=<YOUR_CLOUDINARY_CLOUD_NAME>
+SIGNTENGINE_API_KEY=<YOUR_SIGNTENGINE_API_KEY>
+SIGNTENGINE_API_SECRET=<YOUR_SIGNTENGINE_API_SECRET>
+
+After setting up the .env now:
+
+start Backend:
+cd backend
+npm install
+npm run start
+
+start Frontend:
+cd frontend
+npm install
+npm run dev
+
+Access the Application
+Local: http://localhost:5173
+
+Deployed on Render: https://nearbuy.onrender.com/
+Note: It may take a few seconds to load. Please be patient.
+
 
 
 NearBuy: A Local Commerce Platform
