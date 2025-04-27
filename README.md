@@ -1,7 +1,7 @@
 ## ⚙️ Installation Guide
 Step 1: Clone the repository
 ```bash
-git clone https://github.com/<your-username>/NearBuy.git
+git clone https://github.com/aAdi0103/NearBuy.git
 ```
 
 Step 2: Set up environment variables
@@ -52,7 +52,7 @@ https://nearbuy.onrender.com/
 📍 NearBuy — Your Hyperlocal Services & Goods Platform
 NearBuy is a community-driven local commerce platform designed to connect users with nearby service providers and goods sellers. Whether you're looking for a personal trainer, a home-cooked meal, or second-hand electronics, NearBuy brings local discovery to your fingertips with seamless real-time experiences.
 
-## ✨ Features
+✨ Features
 🛍️ Goods Marketplace: Buy & sell second-hand or new items (electronics, furniture, clothing, etc.)
 
 🧹 Service Marketplace: Book local services like laundry, personal chefs, tutors, or fitness trainers
@@ -69,12 +69,12 @@ NearBuy is a community-driven local commerce platform designed to connect users 
 
 📲 Mobile OTP Authentication (coming soon!)
 
-## 💻 Tech Stack
+💻 Tech Stack
 Frontend: React.js + Tailwind CSS
 
 Backend: Node.js + Express.js
 
-Database: MongoDB
+Database: MongoDB, redis(query optimization)
 
 Authentication: JWT Tokens + BcryptJS
 
@@ -89,9 +89,9 @@ Sightengine (for image moderation)
 Address-to-Geolocation API (for user location mapping)
 
 
-## 🗺️ User Flow
+🗺️ User Flow
 
-**For Buyers/Service Seekers:
+For Buyers/Service Seekers:
 
 Search for services or products nearby via map or search
 
@@ -101,7 +101,7 @@ Book a service or purchase a product easily
 
 Get real-time notifications and updates
 
-**For Sellers/Service Providers:
+For Sellers/Service Providers:
 
 Register and list services/products
 
@@ -109,7 +109,7 @@ Set custom pricing, availability, and manage bookings
 
 Gain visibility and grow within the local community
 
-## 📋 Page Structure
+📋 Page Structure
 Landing Page (Map + Search + Featured Listings)
 
 Goods Listing Page (Category-wise browsing)
@@ -120,12 +120,12 @@ Booking/Checkout Page (simple and secure)
 
 User Dashboard (manage history, favorites, and bookings)
 
-## 🔥 Real Use Cases
+🔥 Real Use Cases
 Find a Personal Trainer: Book a local fitness expert based on location, price, and reviews.
 
 Buy a Second-Hand Laptop: Connect directly with local sellers without marketplace middlemen.
 
-## 🧩 System Architecture
+🧩 System Architecture
 Authentication APIs: Signup, login, JWT session management
 
 Goods APIs: Create, search, filter, and manage listings
@@ -134,14 +134,14 @@ Booking APIs: Schedule, reschedule, and manage service appointments
 
 Geo-Location APIs: Fetch real-time nearby services dynamically
 
-## 🚀 Challenges & Solutions
+🚀 Challenges & Solutions
 API Consistency: Implemented caching and retry mechanisms
 
 Geo-location Scaling: Optimized mapping APIs using clustering for faster loads
 
 Moderation: Used external APIs for safer listing verification
 
-## 🔮 Future Scope
+🔮 Future Scope
  🧠 AI-based personalized service recommendations
 
  🌍 Multi-language support for wider reach
@@ -152,18 +152,14 @@ Moderation: Used external APIs for safer listing verification
 
  ⭐ Trust-building features like verified badges and detailed reviews
 
-## 🤝 Contribution
+🤝 Contribution
 We welcome your contributions!
 Follow the standard GitHub flow: Fork → Branch → Commit → Pull Request.
 
-## 🌟 Support
+🌟 Support
 If you find NearBuy useful, please ⭐ star the repository and share it with your network!
 Every bit of support helps us grow the platform.
 
-## 🧾 License
-This project is licensed under the MIT License.
-
-## 🙌 Special Thanks
 OpenStreetMap for free mapping solutions
 
 Sightengine for providing smart content moderation APIs
