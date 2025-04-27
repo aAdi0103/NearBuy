@@ -4,10 +4,6 @@ Step 1: Clone the repository
 git clone https://github.com/<your-username>/NearBuy.git
 ```
 
-```bash
-cd NearBuy
-```
-
 Step 2: Set up environment variables
 Create a `.env` file inside the backend directory and add the following:
 
