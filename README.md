@@ -94,7 +94,8 @@ Address-to-Geolocation API (for user location mapping)
 
 
 ## 🗺️ User Flow
-For Buyers/Service Seekers:
+
+**For Buyers/Service Seekers:
 
 Search for services or products nearby via map or search
 
@@ -104,7 +105,7 @@ Book a service or purchase a product easily
 
 Get real-time notifications and updates
 
-For Sellers/Service Providers:
+**For Sellers/Service Providers:
 
 Register and list services/products
 
@@ -145,15 +146,15 @@ Geo-location Scaling: Optimized mapping APIs using clustering for faster loads
 Moderation: Used external APIs for safer listing verification
 
 ## 🔮 Future Scope
-## 🧠 AI-based personalized service recommendations
+ 🧠 AI-based personalized service recommendations
 
-## 🌍 Multi-language support for wider reach
+ 🌍 Multi-language support for wider reach
 
-## 💬 In-app chat between buyers and service providers
+ 💬 In-app chat between buyers and service providers
 
-## 🏆 Premium subscription options for boosted visibility
+ 🏆 Premium subscription options for boosted visibility
 
-## ⭐ Trust-building features like verified badges and detailed reviews
+ ⭐ Trust-building features like verified badges and detailed reviews
 
 ## 🤝 Contribution
 We welcome your contributions!
