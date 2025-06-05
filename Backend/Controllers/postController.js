@@ -1,13 +1,11 @@
 import Post from "../Models/PostModel.js";
-import User from "../Models/UserModel.js"
-import cloudinary from '../Lib/cloudinaryConfig.js'
-import {analyzeImage} from '../Lib/signtEngine.js'
+import User from "../Models/UserModel.js";
+import cloudinary from "../Lib/cloudinaryConfig.js";
+import { analyzeImage } from "../Lib/signtEngine.js";
 import axios from "axios";
 import levenshtein from "fast-levenshtein";
-import redis from '../Lib/redis.js'
-const bannedWords =
-
- [
+import redis from "../Lib/redis.js";
+const bannedWords = [
   "चूतिया", // chutiya (idiot/asshole)
   "भोसड़ीके", // bhosdike (crude insult)
   "मादरचोद", // madarchod (motherfucker)
@@ -42,7 +40,8 @@ const bannedWords =
   "prick",
   "twat",
   "wanker",
-  "bullshit", "chutiyapa", // nonsense/stupidity
+  "bullshit",
+  "chutiyapa", // nonsense/stupidity
   "gandu", // ass (slang variation)
   "bhenchod", // sisterfucker (shortened)
   "mc", // abbreviation for madarchod
@@ -57,33 +56,31 @@ const bannedWords =
   "bakchodi", // bullshit/nonsense
   "chodu", // fucker (slang variation)
   "fattugiri", // cowardice (slang)
-  "randikhana"
+  "randikhana",
+];
 
- ]
-
-
-
- function normalizeText(text) {
-  if (typeof text !== 'string') {
-      text = String(text); // Convert to string if it's not already
+function normalizeText(text) {
+  if (typeof text !== "string") {
+    text = String(text); // Convert to string if it's not already
   }
   return text.toLowerCase().replace(/[^a-zA-Z0-9]/g, ""); // Remove special characters
 }
 
-
 function isSimilar(word, target) {
-    return levenshtein.get(word, target) <= 2; // Allow only 1 letter difference
+  return levenshtein.get(word, target) <= 2; // Allow only 1 letter difference
 }
 
 function containsBannedWords(text) {
-    const cleanedText = normalizeText(text);
-    return bannedWords.some((word) =>
-        isSimilar(cleanedText, word) // Check for close matches
-    );
+  const cleanedText = normalizeText(text);
+  return bannedWords.some(
+    (word) => isSimilar(cleanedText, word) // Check for close matches
+  );
 }
 const getCoordinates = async (address) => {
   try {
-    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json`;
+    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
+      address
+    )}&format=json`;
     const response = await axios.get(url);
 
     if (response.data.length > 0) {
@@ -92,29 +89,57 @@ const getCoordinates = async (address) => {
         lng: parseFloat(response.data[0].lon),
       };
     } else {
-      throw new Error("Invalid location. Please enter a correct location with proper spelling.");
+      throw new Error(
+        "Invalid location. Please enter a correct location with proper spelling."
+      );
     }
   } catch (error) {
-    throw new Error("Failed to fetch coordinates. Please check your location spelling.");
+    throw new Error(
+      "Failed to fetch coordinates. Please check your location spelling."
+    );
   }
 };
 
-
 export const createPosts = async (req, res) => {
   try {
-    const { heading, description, images, location, price, category, quantity, condition } = req.body;
+    const {
+      heading,
+      description,
+      images,
+      location,
+      price,
+      category,
+      quantity,
+      condition,
+    } = req.body;
     const author = req.user._id;
 
-    if (!heading || !description || !location || !price || !category || !quantity || !condition) {
-      return res.status(400).json({ message: "All required fields must be provided." });
+    if (
+      !heading ||
+      !description ||
+      !location ||
+      !price ||
+      !category ||
+      !quantity ||
+      !condition
+    ) {
+      return res
+        .status(400)
+        .json({ message: "All required fields must be provided." });
     }
     if (containsBannedWords(heading)) {
-      return res.status(400).json({ message: "Your post contains restricted words in the title." });
+      return res
+        .status(400)
+        .json({ message: "Your post contains restricted words in the title." });
     }
     if (containsBannedWords(description)) {
-      return res.status(400).json({ message: "Your post contains restricted words in the description." });
+      return res
+        .status(400)
+        .json({
+          message: "Your post contains restricted words in the description.",
+        });
     }
-  
+
     const locationString = `${location.area}, ${location.city}, ${location.state}, ${location.country}`;
 
     let lat, lng;
@@ -130,14 +155,17 @@ export const createPosts = async (req, res) => {
         const result = await cloudinary.uploader.upload(images);
         uploadedImage = result.secure_url;
       } catch (uploadError) {
-        return res.status(500).json({ message: "Image upload failed", error: uploadError.message });
+        return res
+          .status(500)
+          .json({ message: "Image upload failed", error: uploadError.message });
       }
     }
 
-
     const moderationResult = await analyzeImage(uploadedImage);
     if (!moderationResult.isSafe) {
-      return res.status(400).json({ message: `Image rejected: ${moderationResult.reason}` });
+      return res
+        .status(400)
+        .json({ message: `Image rejected: ${moderationResult.reason}` });
     }
 
     const newPost = new Post({
@@ -151,16 +179,17 @@ export const createPosts = async (req, res) => {
       category,
       author,
       latitude: lat,
-      longitude: lng
+      longitude: lng,
     });
 
     await newPost.save();
-    res.status(201).json({ message: "Post created successfully", post: newPost });
+    res
+      .status(201)
+      .json({ message: "Post created successfully", post: newPost });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
-
 
 // Controller to get posts by an array of id
 export const getPostsByIds = async (req, res) => {
@@ -184,13 +213,11 @@ export const getPostsByIds = async (req, res) => {
   }
 };
 
-
 export const getFeedPosts = async function (req, res) {
   try {
     const userId = req.user.id;
 
-    const posts = await Post.find({ author: userId }) 
-      .sort({ createdAt: -1 });
+    const posts = await Post.find({ author: userId }).sort({ createdAt: -1 });
 
     res.status(200).json(posts);
   } catch (error) {
@@ -213,12 +240,16 @@ export const deletePost = async (req, res) => {
     // Checking if the current user is the author of the post
     if (post.author.toString() !== userId.toString()) {
       console.log("not authorized");
-      return res.status(403).json({ message: "You are not authorized to delete this post" });
+      return res
+        .status(403)
+        .json({ message: "You are not authorized to delete this post" });
     }
 
     // Delete the image from Cloudinary
     if (post.images) {
-      await cloudinary.uploader.destroy(post.images.split("/").pop().split(".")[0]);
+      await cloudinary.uploader.destroy(
+        post.images.split("/").pop().split(".")[0]
+      );
     }
 
     // Remove post ID from the user's posts array
@@ -237,7 +268,15 @@ export const deletePost = async (req, res) => {
 export const updatePostt = async (req, res) => {
   try {
     const { id } = req.params;
-    const allowedFields = ["heading", "description", "images", "location", "price", "condition", "category"];
+    const allowedFields = [
+      "heading",
+      "description",
+      "images",
+      "location",
+      "price",
+      "condition",
+      "category",
+    ];
     const updatedData = {};
 
     for (const field of allowedFields) {
@@ -246,10 +285,16 @@ export const updatePostt = async (req, res) => {
       }
     }
     if (containsBannedWords(updatedData.heading)) {
-      return res.status(400).json({ message: "Your post contains restricted words in the title." });
+      return res
+        .status(400)
+        .json({ message: "Your post contains restricted words in the title." });
     }
     if (containsBannedWords(updatedData.description)) {
-      return res.status(400).json({ message: "Your post contains restricted words in the description." });
+      return res
+        .status(400)
+        .json({
+          message: "Your post contains restricted words in the description.",
+        });
     }
 
     const { location } = req.body;
@@ -257,9 +302,14 @@ export const updatePostt = async (req, res) => {
 
     // Fetch coordinates
     const coordinates = await getCoordinates(locationString);
-    
+
     if (!coordinates) {
-      return res.status(400).json({ message: "Coordinates not found for the given address. Please try again." });
+      return res
+        .status(400)
+        .json({
+          message:
+            "Coordinates not found for the given address. Please try again.",
+        });
     }
 
     updatedData.latitude = coordinates.lat;
@@ -276,7 +326,9 @@ export const updatePostt = async (req, res) => {
     }
     const moderationResult = await analyzeImage(updatedData.images);
     if (!moderationResult.isSafe) {
-      return res.status(400).json({ message: `Image rejected: ${moderationResult.reason}` });
+      return res
+        .status(400)
+        .json({ message: `Image rejected: ${moderationResult.reason}` });
     }
 
     // Ensure post exists before updating
@@ -297,16 +349,17 @@ export const updatePostt = async (req, res) => {
   }
 };
 
-export const getAllProducts = async (req,res) =>{
+export const getAllProducts = async (req, res) => {
   try {
-    const products = await Post.find(); 
+    const products = await Post.find();
     res.status(200).json(products);
   } catch (error) {
     console.error("Error fetching Products:", error);
-    res.status(500).json({ message: "Error fetching Products", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error fetching Products", error: error.message });
   }
-}
-
+};
 
 export const getFeedPostsID = async (req, res) => {
   try {
@@ -329,7 +382,6 @@ export const getFeedPostsID = async (req, res) => {
   }
 };
 
-
 export const getNearbyProducts = async (req, res) => {
   // Extract parameters from the request query
   const { lat, lng, radius } = req.query;
@@ -345,7 +397,9 @@ export const getNearbyProducts = async (req, res) => {
   const maxDistance = parseFloat(radius);
 
   if (isNaN(userLat) || isNaN(userLng) || isNaN(maxDistance)) {
-    return res.status(400).json({ message: "Invalid latitude, longitude, or radius" });
+    return res
+      .status(400)
+      .json({ message: "Invalid latitude, longitude, or radius" });
   }
 
   try {
@@ -363,15 +417,22 @@ export const getNearbyProducts = async (req, res) => {
       const dLon = (lon2 - lon1) * (Math.PI / 180);
       const a =
         Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
-        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        Math.cos(lat1 * (Math.PI / 180)) *
+          Math.cos(lat2 * (Math.PI / 180)) *
+          Math.sin(dLon / 2) *
+          Math.sin(dLon / 2);
       return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     };
 
     // Filter nearby services based on distance
-    const nearbyProducts = products.filter(Product => {
+    const nearbyProducts = products.filter((Product) => {
       if (!Product.latitude || !Product.longitude) return false;
-      const distance = getDistance(userLat, userLng, Product.latitude, Product.longitude);
+      const distance = getDistance(
+        userLat,
+        userLng,
+        Product.latitude,
+        Product.longitude
+      );
       return distance <= maxDistance;
     });
 
@@ -387,8 +448,6 @@ export const getNearbyProducts = async (req, res) => {
   }
 };
 
-
-
 export const getSearchedProducts = async (req, res) => {
   try {
     const { location, search } = req.query;
@@ -397,13 +456,17 @@ export const getSearchedProducts = async (req, res) => {
     // Get coordinates first
     const coordinates = await getCoordinates(location);
     if (!coordinates) {
-      return res.status(400).json({ message: "Invalid location, please select another." });
+      return res
+        .status(400)
+        .json({ message: "Invalid location, please select another." });
     }
 
     const { lat, lng } = coordinates;
 
     // Use coordinates in cache key for uniqueness
-    const cacheKey = `products:${productString}:${lat.toFixed(4)}:${lng.toFixed(4)}`;
+    const cacheKey = `products:${productString}:${lat.toFixed(4)}:${lng.toFixed(
+      4
+    )}`;
 
     // Check if data exists in Redis
     const cachedData = await redis.get(cacheKey);

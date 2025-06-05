@@ -15,4 +15,5 @@ router.delete('/delete/:id',protectRoute,deleteService)
 router.get("/current/nearby",getNearbyServices);
 router.get("/getSearchedServices",getSearchedServices)
 router.get('/:id', protectRoute, getServiceById);
+
 export default router

@@ -6,10 +6,10 @@ import {createPosts, getPostsByIds,getFeedPosts, deletePost,updatePostt,getAllPr
 import {protectRoute} from '../Middlewares/authMiddleware.js'
 
 
-router.post('/create',protectRoute,createPosts);
+router.post('/create',protectRoute,createPosts)
 router.get("/getPosts", protectRoute,getFeedPosts);
 router.get("/getPosts/:email", protectRoute,getFeedPostsID);
-router.get('/getAllProducts',getAllProducts)
+router.get('/getAllProducts',getAllProducts);
 router.delete('/delete/:id',protectRoute,deletePost)
 router.put('/updatePost/:id',protectRoute,updatePostt)
 router.get("/current/nearby",getNearbyProducts);

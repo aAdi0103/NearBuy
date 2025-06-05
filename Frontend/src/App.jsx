@@ -27,6 +27,7 @@ import Booking from './Pages/Listings/Booking'
 import Notification from './Pages/Notfication';
 import UserBookings from './Pages/Listings/UserBookings';
 function App() {
+  
   const { data: authUser, isLoading } = useQuery({
     queryKey: ['authUser'],
     queryFn: async () => {
@@ -64,6 +65,7 @@ function App() {
 
   if (isLoading) return null
 
+  
   return (
     <>
       <Toaster position="top-center" reverseOrder={false} />

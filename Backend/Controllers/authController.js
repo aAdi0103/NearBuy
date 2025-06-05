@@ -1,8 +1,8 @@
 import User from "../Models/UserModel.js";
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
-
 import axios from 'axios'
+
 const getCoordinates = async (address) => {
 	try {
 	  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json`;
@@ -20,9 +20,8 @@ const getCoordinates = async (address) => {
 	} catch (error) {
 	  throw new Error("Invalid location. Please enter a correct location with the correct spelling.");
 	}
-  };
+};
   
-
 export const signup = async (req, res) => {
 	try {
 		const { name, email, password, location } = req.body;
@@ -88,7 +87,6 @@ export const signup = async (req, res) => {
 	}
 };
 
-
 export const login = async function(req,res){
     try {
 		const {email, password } = req.body;
@@ -97,17 +95,18 @@ export const login = async function(req,res){
 			return res.status(400).json({ message: "All fields are required" });
 		}
 		
-		let currUser = await User.findOne({ email});
+		let currUser = await User.findOne({email});
+
 		if(!currUser){
 			return res.status(401).json({ message: "Invalid credentials" });
 
 		}
 
 		const matchPassword = await bcrypt.compare(password,currUser.password);
+
 		if(!matchPassword){
 			return res.status(401).json({ message: "Invalid credentials" });
 		}
-
 
 		const token = jwt.sign({ userId: currUser._id }, process.env.JWT_SECRET, { expiresIn: "3d" });
 
@@ -124,12 +123,12 @@ export const login = async function(req,res){
 		console.log("Error in login: ", error.message);
 		res.status(500).json({ message: "Internal server error" });
 	}
-}
+};
 
 export const logout = function(req,res){
     res.clearCookie('jwt-token');
 	res.json({ message: "Logged out successfully" });
-}
+};
 
 export const getCurrentUser = async (req, res) => {
 	try {

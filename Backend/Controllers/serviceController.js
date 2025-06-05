@@ -246,8 +246,6 @@ export const createService = async (req, res) => {
 };
 
 
-
-
 export const deleteService = async (req, res) => {
   try {
     const serviceId = req.params.id;
